@@ -5,8 +5,6 @@
   "description": "A custom D&D initiative tracker with concentration tracking, pause/resume, and sound alerts.",
   "author": "cyenobite",
   "icon": "/obr-initiative-tracker/icon.svg",
-  "tokens": [],
-  "actions": [],
   "popover": {
     "url": "/obr-initiative-tracker/index.html",
     "width": 400,
