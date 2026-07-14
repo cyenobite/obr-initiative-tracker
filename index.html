@@ -270,63 +270,109 @@
     return Math.round(val * 10) / 10;
   }
 
-  // Listen for token additions from the background page via OBR metadata
+  // Set up OBR context menu and item listener when SDK is ready
   OBR.onReady(async () => {
-    // Watch for metadata changes on scene items
+
+    // Register context menu
+    OBR.contextMenu.create({
+      id: `${ID}/context-menu`,
+      icons: [
+        {
+          icon: "/obr-initiative-tracker/add.svg",
+          label: "Add to Initiative",
+          filter: {
+            every: [
+              { key: "layer", value: "CHARACTER" },
+              { key: ["metadata", `${ID}/metadata`], value: undefined },
+            ],
+          },
+        },
+        {
+          icon: "/obr-initiative-tracker/remove.svg",
+          label: "Remove from Initiative",
+          filter: {
+            every: [
+              { key: "layer", value: "CHARACTER" },
+            ],
+          },
+        },
+      ],
+      onClick(context) {
+        const addToInitiative = context.items.every(
+          (item) => item.metadata[`${ID}/metadata`] === undefined
+        );
+        if (addToInitiative) {
+          OBR.scene.items.updateItems(context.items, (items) => {
+            for (let item of items) {
+              item.metadata[`${ID}/metadata`] = {
+                name: item.name,
+                initiative: randInit(),
+              };
+            }
+          });
+        } else {
+          OBR.scene.items.updateItems(context.items, (items) => {
+            for (let item of items) {
+              delete item.metadata[`${ID}/metadata`];
+            }
+          });
+        }
+      },
+    });
+
+    // Watch for metadata changes to sync tracker
     OBR.scene.items.onChange(async (items) => {
+      let changed = false;
+
       for (const item of items) {
         const meta = item.metadata[`${ID}/metadata`];
+
         if (meta) {
-          // Check if this token is already in our tracker
+          // Token added to initiative
           const exists = combatants.some(c => c.tokenId === item.id);
           if (!exists) {
-            // Determine type based on who owns the token
             const players = await OBR.party.getPlayers();
             const isPlayer = players.some(p => p.id === item.createdUserId);
-            const type = isPlayer ? 'Player' : 'Monster';
             combatants.push({
               name: item.name || 'Unknown',
               init: meta.initiative || randInit(),
-              type,
+              type: isPlayer ? 'Player' : 'Monster',
               id: Date.now() + Math.random(),
               tokenId: item.id,
               hidden: item.visible === false,
               cn: false,
               cnTurns: 0
             });
-            sortCombatants();
-            render();
-            setTimeout(() => {
-              const area = document.querySelector('.scroll-area');
-              if (area) area.scrollTop = area.scrollHeight;
-            }, 30);
+            changed = true;
+          }
+          // Check for visibility changes
+          const existing = combatants.find(c => c.tokenId === item.id);
+          if (existing) {
+            const nowHidden = item.visible === false;
+            if (existing.hidden !== nowHidden) {
+              existing.hidden = nowHidden;
+              changed = true;
+            }
           }
         } else {
-          // Metadata was removed — remove from tracker
+          // Token removed from initiative
           const idx = combatants.findIndex(c => c.tokenId === item.id);
           if (idx !== -1) {
             combatants.splice(idx, 1);
             if (activeIndex >= combatants.length) activeIndex = 0;
-            render();
-          }
-        }
-      }
-    });
-
-    // Watch for token visibility changes (hidden/revealed)
-    OBR.scene.items.onChange((items) => {
-      let changed = false;
-      for (const item of items) {
-        const c = combatants.find(c => c.tokenId === item.id);
-        if (c) {
-          const nowHidden = item.visible === false;
-          if (c.hidden !== nowHidden) {
-            c.hidden = nowHidden;
             changed = true;
           }
         }
       }
-      if (changed) render();
+
+      if (changed) {
+        sortCombatants();
+        render();
+        setTimeout(() => {
+          const area = document.querySelector('.scroll-area');
+          if (area) area.scrollTop = area.scrollHeight;
+        }, 30);
+      }
     });
   });
 
@@ -390,6 +436,7 @@
     }
     render();
   }
+  window.removeCombatant = removeCombatant;
 
   window.toggleCN = function(id) {
     const c = combatants.find(c => c.id === id);
@@ -404,8 +451,6 @@
     editingInitId = null; editingTypeId = null;
     render();
   }
-
-  window.removeCombatant = removeCombatant;
 
   window.startEditInit = function(id) {
     editingInitId = id; editingTypeId = null; confirmingId = null;
@@ -488,7 +533,7 @@
     if (editingInitId !== null || editingTypeId !== null) return;
     if (confirmingId !== null) { confirmingId = null; render(); return; }
     if (state === 'paused') { activeIndex = idx; render(); return; }
-    requestRemove(id);
+    window.requestRemove(id);
   }
 
   function renderActionBar() {
@@ -535,7 +580,6 @@
       let cls = 'combatant';
       if (isActive) cls += ' active';
       if (state === 'paused') cls += ' paused-click';
-      if (isHidden) cls += ' hidden-token';
       div.className = cls;
       if (isHidden) div.style.opacity = '0.5';
       div.onclick = () => window.selectCombatant(i, c.id);
