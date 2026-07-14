@@ -245,7 +245,14 @@
   </div>
 </div>
 <script type="module">
-  import OBR from "https://cdn.jsdelivr.net/npm/@owlbear-rodeo/sdk@1.6.0/+esm";
+  // Try to load OBR SDK — gracefully skip if not available
+  let OBR = null;
+  try {
+    const module = await import("https://cdn.jsdelivr.net/npm/@owlbear-rodeo/sdk@1.6.0/+esm");
+    OBR = module.default;
+  } catch(e) {
+    console.log("OBR SDK not available — running in standalone mode");
+  }
 
   const ID = "io.github.cyenobite.obr-initiative-tracker";
 
@@ -270,111 +277,106 @@
     return Math.round(val * 10) / 10;
   }
 
-  // Set up OBR context menu and item listener when SDK is ready
-  OBR.onReady(async () => {
-
-    // Register context menu
-    OBR.contextMenu.create({
-      id: `${ID}/context-menu`,
-      icons: [
-        {
-          icon: "/obr-initiative-tracker/add.svg",
-          label: "Add to Initiative",
-          filter: {
-            every: [
-              { key: "layer", value: "CHARACTER" },
-              { key: ["metadata", `${ID}/metadata`], value: undefined },
-            ],
+  // Set up OBR features only if SDK loaded successfully
+  if (OBR) {
+    OBR.onReady(async () => {
+      // Register context menu
+      OBR.contextMenu.create({
+        id: `${ID}/context-menu`,
+        icons: [
+          {
+            icon: "/obr-initiative-tracker/add.svg",
+            label: "Add to Initiative",
+            filter: {
+              every: [
+                { key: "layer", value: "CHARACTER" },
+                { key: ["metadata", `${ID}/metadata`], value: undefined },
+              ],
+            },
           },
-        },
-        {
-          icon: "/obr-initiative-tracker/remove.svg",
-          label: "Remove from Initiative",
-          filter: {
-            every: [
-              { key: "layer", value: "CHARACTER" },
-            ],
+          {
+            icon: "/obr-initiative-tracker/remove.svg",
+            label: "Remove from Initiative",
+            filter: {
+              every: [
+                { key: "layer", value: "CHARACTER" },
+              ],
+            },
           },
-        },
-      ],
-      onClick(context) {
-        const addToInitiative = context.items.every(
-          (item) => item.metadata[`${ID}/metadata`] === undefined
-        );
-        if (addToInitiative) {
-          OBR.scene.items.updateItems(context.items, (items) => {
-            for (let item of items) {
-              item.metadata[`${ID}/metadata`] = {
-                name: item.name,
-                initiative: randInit(),
-              };
-            }
-          });
-        } else {
-          OBR.scene.items.updateItems(context.items, (items) => {
-            for (let item of items) {
-              delete item.metadata[`${ID}/metadata`];
-            }
-          });
-        }
-      },
-    });
-
-    // Watch for metadata changes to sync tracker
-    OBR.scene.items.onChange(async (items) => {
-      let changed = false;
-
-      for (const item of items) {
-        const meta = item.metadata[`${ID}/metadata`];
-
-        if (meta) {
-          // Token added to initiative
-          const exists = combatants.some(c => c.tokenId === item.id);
-          if (!exists) {
-            const players = await OBR.party.getPlayers();
-            const isPlayer = players.some(p => p.id === item.createdUserId);
-            combatants.push({
-              name: item.name || 'Unknown',
-              init: meta.initiative || randInit(),
-              type: isPlayer ? 'Player' : 'Monster',
-              id: Date.now() + Math.random(),
-              tokenId: item.id,
-              hidden: item.visible === false,
-              cn: false,
-              cnTurns: 0
+        ],
+        onClick(context) {
+          const addToInitiative = context.items.every(
+            (item) => item.metadata[`${ID}/metadata`] === undefined
+          );
+          if (addToInitiative) {
+            OBR.scene.items.updateItems(context.items, (items) => {
+              for (let item of items) {
+                item.metadata[`${ID}/metadata`] = {
+                  name: item.name,
+                  initiative: randInit(),
+                };
+              }
             });
-            changed = true;
+          } else {
+            OBR.scene.items.updateItems(context.items, (items) => {
+              for (let item of items) {
+                delete item.metadata[`${ID}/metadata`];
+              }
+            });
           }
-          // Check for visibility changes
-          const existing = combatants.find(c => c.tokenId === item.id);
-          if (existing) {
-            const nowHidden = item.visible === false;
-            if (existing.hidden !== nowHidden) {
-              existing.hidden = nowHidden;
+        },
+      });
+
+      // Watch for metadata changes to sync tracker
+      OBR.scene.items.onChange(async (items) => {
+        let changed = false;
+        for (const item of items) {
+          const meta = item.metadata[`${ID}/metadata`];
+          if (meta) {
+            const exists = combatants.some(c => c.tokenId === item.id);
+            if (!exists) {
+              const players = await OBR.party.getPlayers();
+              const isPlayer = players.some(p => p.id === item.createdUserId);
+              combatants.push({
+                name: item.name || 'Unknown',
+                init: meta.initiative || randInit(),
+                type: isPlayer ? 'Player' : 'Monster',
+                id: Date.now() + Math.random(),
+                tokenId: item.id,
+                hidden: item.visible === false,
+                cn: false,
+                cnTurns: 0
+              });
+              changed = true;
+            }
+            const existing = combatants.find(c => c.tokenId === item.id);
+            if (existing) {
+              const nowHidden = item.visible === false;
+              if (existing.hidden !== nowHidden) {
+                existing.hidden = nowHidden;
+                changed = true;
+              }
+            }
+          } else {
+            const idx = combatants.findIndex(c => c.tokenId === item.id);
+            if (idx !== -1) {
+              combatants.splice(idx, 1);
+              if (activeIndex >= combatants.length) activeIndex = 0;
               changed = true;
             }
           }
-        } else {
-          // Token removed from initiative
-          const idx = combatants.findIndex(c => c.tokenId === item.id);
-          if (idx !== -1) {
-            combatants.splice(idx, 1);
-            if (activeIndex >= combatants.length) activeIndex = 0;
-            changed = true;
-          }
         }
-      }
-
-      if (changed) {
-        sortCombatants();
-        render();
-        setTimeout(() => {
-          const area = document.querySelector('.scroll-area');
-          if (area) area.scrollTop = area.scrollHeight;
-        }, 30);
-      }
+        if (changed) {
+          sortCombatants();
+          render();
+          setTimeout(() => {
+            const area = document.querySelector('.scroll-area');
+            if (area) area.scrollTop = area.scrollHeight;
+          }, 30);
+        }
+      });
     });
-  });
+  }
 
   window.toggleSound = function() {
     soundOn = !soundOn;
