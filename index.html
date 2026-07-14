@@ -244,7 +244,11 @@
     </div>
   </div>
 </div>
-<script>
+<script type="module">
+  import OBR from "https://cdn.jsdelivr.net/npm/@owlbear-rodeo/sdk@1.6.0/+esm";
+
+  const ID = "io.github.cyenobite.obr-initiative-tracker";
+
   let combatants = [];
   let activeIndex = 0;
   let round = 1;
@@ -266,7 +270,67 @@
     return Math.round(val * 10) / 10;
   }
 
-  function toggleSound() {
+  // Listen for token additions from the background page via OBR metadata
+  OBR.onReady(async () => {
+    // Watch for metadata changes on scene items
+    OBR.scene.items.onChange(async (items) => {
+      for (const item of items) {
+        const meta = item.metadata[`${ID}/metadata`];
+        if (meta) {
+          // Check if this token is already in our tracker
+          const exists = combatants.some(c => c.tokenId === item.id);
+          if (!exists) {
+            // Determine type based on who owns the token
+            const players = await OBR.party.getPlayers();
+            const isPlayer = players.some(p => p.id === item.createdUserId);
+            const type = isPlayer ? 'Player' : 'Monster';
+            combatants.push({
+              name: item.name || 'Unknown',
+              init: meta.initiative || randInit(),
+              type,
+              id: Date.now() + Math.random(),
+              tokenId: item.id,
+              hidden: item.visible === false,
+              cn: false,
+              cnTurns: 0
+            });
+            sortCombatants();
+            render();
+            setTimeout(() => {
+              const area = document.querySelector('.scroll-area');
+              if (area) area.scrollTop = area.scrollHeight;
+            }, 30);
+          }
+        } else {
+          // Metadata was removed — remove from tracker
+          const idx = combatants.findIndex(c => c.tokenId === item.id);
+          if (idx !== -1) {
+            combatants.splice(idx, 1);
+            if (activeIndex >= combatants.length) activeIndex = 0;
+            render();
+          }
+        }
+      }
+    });
+
+    // Watch for token visibility changes (hidden/revealed)
+    OBR.scene.items.onChange((items) => {
+      let changed = false;
+      for (const item of items) {
+        const c = combatants.find(c => c.tokenId === item.id);
+        if (c) {
+          const nowHidden = item.visible === false;
+          if (c.hidden !== nowHidden) {
+            c.hidden = nowHidden;
+            changed = true;
+          }
+        }
+      }
+      if (changed) render();
+    });
+  });
+
+  window.toggleSound = function() {
     soundOn = !soundOn;
     const btn = document.getElementById('sound-toggle');
     btn.textContent = soundOn ? '🔔' : '🔕';
@@ -296,7 +360,7 @@
     if (activeIndex < 0) activeIndex = 0;
   }
 
-  function addCombatant() {
+  window.addCombatant = function() {
     const name = document.getElementById('inp-name').value.trim();
     const init = parseInit(document.getElementById('inp-init').value);
     const type = document.getElementById('inp-type').value;
@@ -327,7 +391,7 @@
     render();
   }
 
-  function toggleCN(id) {
+  window.toggleCN = function(id) {
     const c = combatants.find(c => c.id === id);
     if (!c) return;
     c.cn = !c.cn;
@@ -335,13 +399,15 @@
     render();
   }
 
-  function requestRemove(id) {
+  window.requestRemove = function(id) {
     confirmingId = (confirmingId === id) ? null : id;
     editingInitId = null; editingTypeId = null;
     render();
   }
 
-  function startEditInit(id) {
+  window.removeCombatant = removeCombatant;
+
+  window.startEditInit = function(id) {
     editingInitId = id; editingTypeId = null; confirmingId = null;
     render();
     setTimeout(() => {
@@ -350,7 +416,7 @@
     }, 20);
   }
 
-  function commitInitEdit(id) {
+  window.commitInitEdit = function(id) {
     const inp = document.getElementById('init-edit-' + id);
     if (!inp) return;
     const val = parseInit(inp.value);
@@ -360,7 +426,7 @@
     render();
   }
 
-  function startEditType(id) {
+  window.startEditType = function(id) {
     editingTypeId = id; editingInitId = null; confirmingId = null;
     render();
     setTimeout(() => {
@@ -369,7 +435,7 @@
     }, 20);
   }
 
-  function commitTypeEdit(id) {
+  window.commitTypeEdit = function(id) {
     const sel = document.getElementById('type-edit-' + id);
     if (!sel) return;
     const c = combatants.find(c => c.id === id);
@@ -378,7 +444,7 @@
     render();
   }
 
-  function startCombat() {
+  window.startCombat = function() {
     if (combatants.length === 0) return;
     state = 'active'; activeIndex = 0; round = 1;
     document.getElementById('round-num').textContent = '1';
@@ -386,7 +452,7 @@
     render(); scrollToActive();
   }
 
-  function nextTurn() {
+  window.nextTurn = function() {
     if (state !== 'active' || combatants.length === 0) return;
     const current = combatants[activeIndex];
     if (current && current.cn) current.cnTurns++;
@@ -404,10 +470,10 @@
     }, 30);
   }
 
-  function pauseCombat() { state = 'paused'; render(); }
-  function resumeCombat() { state = 'active'; render(); }
+  window.pauseCombat = function() { state = 'paused'; render(); }
+  window.resumeCombat = function() { state = 'active'; render(); }
 
-  function resetCombat() {
+  window.resetCombat = function() {
     const keep = combatants.filter(c => c.type === 'Player' || c.type === 'NPC');
     keep.forEach(c => { c.init = randInit(); c.cn = false; c.cnTurns = 0; });
     combatants = keep;
@@ -418,7 +484,7 @@
     render();
   }
 
-  function selectCombatant(idx, id) {
+  window.selectCombatant = function(idx, id) {
     if (editingInitId !== null || editingTypeId !== null) return;
     if (confirmingId !== null) { confirmingId = null; render(); return; }
     if (state === 'paused') { activeIndex = idx; render(); return; }
@@ -430,19 +496,19 @@
     bar.innerHTML = '';
     if (state === 'idle') {
       bar.style.gridTemplateColumns = '1fr auto';
-      const s = document.createElement('button'); s.className = 'btn-start'; s.textContent = 'Start combat'; s.onclick = startCombat;
-      const r = document.createElement('button'); r.className = 'btn-reset'; r.textContent = 'Reset'; r.onclick = resetCombat;
+      const s = document.createElement('button'); s.className = 'btn-start'; s.textContent = 'Start combat'; s.onclick = window.startCombat;
+      const r = document.createElement('button'); r.className = 'btn-reset'; r.textContent = 'Reset'; r.onclick = window.resetCombat;
       bar.appendChild(s); bar.appendChild(r);
     } else if (state === 'active') {
       bar.style.gridTemplateColumns = '1fr 1fr 1fr';
-      const n = document.createElement('button'); n.className = 'btn-next'; n.textContent = 'Next turn \u203a'; n.onclick = nextTurn;
-      const p = document.createElement('button'); p.className = 'btn-pause'; p.textContent = 'Pause'; p.onclick = pauseCombat;
-      const r = document.createElement('button'); r.className = 'btn-reset'; r.textContent = 'Reset'; r.onclick = resetCombat;
+      const n = document.createElement('button'); n.className = 'btn-next'; n.textContent = 'Next turn \u203a'; n.onclick = window.nextTurn;
+      const p = document.createElement('button'); p.className = 'btn-pause'; p.textContent = 'Pause'; p.onclick = window.pauseCombat;
+      const r = document.createElement('button'); r.className = 'btn-reset'; r.textContent = 'Reset'; r.onclick = window.resetCombat;
       bar.appendChild(n); bar.appendChild(p); bar.appendChild(r);
     } else {
       bar.style.gridTemplateColumns = '1fr auto';
-      const res = document.createElement('button'); res.className = 'btn-resume'; res.textContent = 'Resume combat'; res.onclick = resumeCombat;
-      const r = document.createElement('button'); r.className = 'btn-reset'; r.textContent = 'Reset'; r.onclick = resetCombat;
+      const res = document.createElement('button'); res.className = 'btn-resume'; res.textContent = 'Resume combat'; res.onclick = window.resumeCombat;
+      const r = document.createElement('button'); r.className = 'btn-reset'; r.textContent = 'Reset'; r.onclick = window.resetCombat;
       bar.appendChild(res); bar.appendChild(r);
     }
   }
@@ -451,7 +517,7 @@
     const list = document.getElementById('combatant-list');
     document.getElementById('pause-hint').style.display = state === 'paused' ? 'block' : 'none';
     if (combatants.length === 0) {
-      list.innerHTML = '<div class="empty-state">No combatants yet — add some below</div>';
+      list.innerHTML = '<div class="empty-state">No combatants yet — add some below or right-click a token on the map</div>';
       renderActionBar(); return;
     }
     list.innerHTML = '';
@@ -464,23 +530,26 @@
       const isConfirming = confirmingId === c.id;
       const isEditingInit = editingInitId === c.id;
       const isEditingType = editingTypeId === c.id;
+      const isHidden = c.hidden === true;
       const div = document.createElement('div');
       let cls = 'combatant';
       if (isActive) cls += ' active';
       if (state === 'paused') cls += ' paused-click';
+      if (isHidden) cls += ' hidden-token';
       div.className = cls;
-      div.onclick = () => selectCombatant(i, c.id);
+      if (isHidden) div.style.opacity = '0.5';
+      div.onclick = () => window.selectCombatant(i, c.id);
       const initCell = isEditingInit
         ? `<input class="init-input" id="init-edit-${c.id}" type="number" min="1" max="30" step="0.1" value="${formatInit(c.init)}"
              onclick="event.stopPropagation()"
-             onkeydown="if(event.key==='Enter'){event.stopPropagation();commitInitEdit(${c.id});}if(event.key==='Escape'){editingInitId=null;render();}"
-             onblur="commitInitEdit(${c.id})">`
-        : `<div class="init-box" onclick="event.stopPropagation(); startEditInit(${c.id})" title="Click to edit">${formatInit(c.init)}</div>`;
+             onkeydown="if(event.key==='Enter'){event.stopPropagation();window.commitInitEdit(${c.id});}if(event.key==='Escape'){editingInitId=null;render();}"
+             onblur="window.commitInitEdit(${c.id})">`
+        : `<div class="init-box" onclick="event.stopPropagation(); window.startEditInit(${c.id})" title="Click to edit">${formatInit(c.init)}</div>`;
       const typeCell = isEditingType
         ? `<select class="ctype-select" id="type-edit-${c.id}"
              onclick="event.stopPropagation()"
-             onchange="commitTypeEdit(${c.id})"
-             onblur="commitTypeEdit(${c.id})"
+             onchange="window.commitTypeEdit(${c.id})"
+             onblur="window.commitTypeEdit(${c.id})"
              onkeydown="if(event.key==='Escape'){editingTypeId=null;render();}">
              <option value="Player" ${c.type==='Player'?'selected':''}>Player</option>
              <option value="Monster" ${c.type==='Monster'?'selected':''}>Monster</option>
@@ -488,8 +557,8 @@
            </select>`
         : `<span class="ctype-badge"
              style="color:${typeColors[c.type]||'#a89890'}; background:${typeBg[c.type]||'#2a2a2a'};"
-             onclick="event.stopPropagation(); startEditType(${c.id})"
-             title="Click to change type">${c.type}</span>`;
+             onclick="event.stopPropagation(); window.startEditType(${c.id})"
+             title="Click to change type">${c.type}${isHidden ? ' 👁️' : ''}</span>`;
       const activeLabel = isActive && state === 'active'
         ? `<span class="active-label" style="color:var(--accent)">&nbsp;&middot;&nbsp; Active</span>` : '';
       const deckLabel = isActive && state === 'paused'
@@ -503,15 +572,15 @@
             ${typeCell}${activeLabel}${deckLabel}
           </div>
         </div>
-        <button class="cn-btn${c.cn ? ' cn-on' : ''}" onclick="event.stopPropagation(); toggleCN(${c.id})" title="Toggle Concentration">
+        <button class="cn-btn${c.cn ? ' cn-on' : ''}" onclick="event.stopPropagation(); window.toggleCN(${c.id})" title="Toggle Concentration">
           <div class="cn-dot"></div>CN
         </button>
         ${c.cn ? `<span class="cn-turns">${c.cnTurns}</span>` : '<span></span>'}
         <div class="turn-dot"></div>
-        <button class="remove-btn" onclick="event.stopPropagation(); requestRemove(${c.id})" title="Remove">&#x2715;</button>
+        <button class="remove-btn" onclick="event.stopPropagation(); window.requestRemove(${c.id})" title="Remove">&#x2715;</button>
         <div class="confirm-overlay${isConfirming ? ' show' : ''}">
           <span class="confirm-msg">Remove <strong>${c.name}</strong>?</span>
-          <button class="btn-confirm-remove" onclick="event.stopPropagation(); removeCombatant(${c.id})">Remove</button>
+          <button class="btn-confirm-remove" onclick="event.stopPropagation(); window.removeCombatant(${c.id})">Remove</button>
           <button class="btn-confirm-cancel" onclick="event.stopPropagation(); confirmingId=null; render()">Cancel</button>
         </div>
       `;
@@ -524,7 +593,7 @@
     if (e.key === 'Enter') document.getElementById('inp-init').focus();
   });
   document.getElementById('inp-init').addEventListener('keydown', e => {
-    if (e.key === 'Enter') addCombatant();
+    if (e.key === 'Enter') window.addCombatant();
   });
 
   freshRoll();
