@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Initiative Tracker Background</title>
+</head>
+<body>
+<script type="module">
+  import OBR from "https://cdn.jsdelivr.net/npm/@owlbear-rodeo/sdk@1.6.0/+esm";
+
+  const ID = "io.github.cyenobite.obr-initiative-tracker";
+
+  OBR.onReady(() => {
+    OBR.contextMenu.create({
+      id: `${ID}/context-menu`,
+      icons: [
+        {
+          icon: "/obr-initiative-tracker/add.svg",
+          label: "Add to Initiative",
+          filter: {
+            every: [
+              { key: "layer", value: "CHARACTER" },
+              { key: ["metadata", `${ID}/metadata`], value: undefined },
+            ],
+          },
+        },
+        {
+          icon: "/obr-initiative-tracker/remove.svg",
+          label: "Remove from Initiative",
+          filter: {
+            every: [
+              { key: "layer", value: "CHARACTER" },
+            ],
+          },
+        },
+      ],
+      onClick(context) {
+        const addToInitiative = context.items.every(
+          (item) => item.metadata[`${ID}/metadata`] === undefined
+        );
+        if (addToInitiative) {
+          // Add each selected token to initiative
+          const initiative = Math.floor(Math.random() * 20) + 1;
+          OBR.scene.items.updateItems(context.items, (items) => {
+            for (let item of items) {
+              item.metadata[`${ID}/metadata`] = {
+                name: item.name,
+                initiative: initiative,
+              };
+            }
+          });
+        } else {
+          // Remove selected tokens from initiative
+          OBR.scene.items.updateItems(context.items, (items) => {
+            for (let item of items) {
+              delete item.metadata[`${ID}/metadata`];
+            }
+          });
+        }
+      },
+    });
+  });
+</script>
+</body>
+</html>
