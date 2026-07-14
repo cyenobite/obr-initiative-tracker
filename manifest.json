@@ -1,12 +1,14 @@
 {
-  "manifest_version": 1,
   "name": "Initiative Tracker",
   "version": "1.0.0",
+  "manifest_version": 1,
   "description": "A custom D&D initiative tracker with concentration tracking, pause/resume, and sound alerts.",
   "author": "cyenobite",
   "icon": "/obr-initiative-tracker/icon.svg",
-  "popover": {
-    "url": "/obr-initiative-tracker/index.html",
+  "action": {
+    "title": "Initiative Tracker",
+    "icon": "/obr-initiative-tracker/icon.svg",
+    "popover": "/obr-initiative-tracker/index.html",
     "width": 400,
     "height": 600
   }
