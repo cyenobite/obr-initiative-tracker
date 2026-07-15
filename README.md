@@ -12,11 +12,12 @@ The default Init-tracker in OBR is great! I just wanted to see if I could add a 
 # So what's different?
 1) Ability to track rounds of combat. 
 2) Ability to track "Concentration" and rounds concentration is used. 
-3) Ability to auto-generate Initiative stats randomly upon adding a name or token. 
+3) Ability to auto-generate Initiative stats randomly upon adding a name. 
 Note: Many characters have an init modifier, Each randomly generated number can be modified manually by clicking on the initiave stat and changing it.
 4) when you reset the tracker for a new combat, it will keep all the "players" so you won't need to re-add those each time, but it will delete the "monsters".
 Players can of course be removed maually. 
 5) Currently testing the ability to add a simple "ding" to indicate a turn is over - with the option to turn this off if it becomes annoying.
 At the moment I'm unsure if this feature is working correctly. 
+6) attempted to add the feature of adding a combatant to the tracker by right-clicking on the token on the map, but after several attempts Claude has not been able to figure this out. I'm taking a break now as all the other features seem to be functioning well except for that one. (Still unsure if the audible 'ding' works with other players). 
 
-This is a work in progress as of 7-14-26. 
+This is a work in progress - on pause - as of 7-15-26. 
