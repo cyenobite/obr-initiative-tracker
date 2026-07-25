@@ -248,7 +248,7 @@
   // Try to load OBR SDK — gracefully skip if not available
   let OBR = null;
   try {
-    const module = await import("https://cdn.jsdelivr.net/npm/@owlbear-rodeo/sdk@1.6.0/+esm");
+    const module = await import("https://cdn.jsdelivr.net/npm/@owlbear-rodeo/sdk@3.1.0/+esm");
     OBR = module.default;
   } catch(e) {
     console.log("OBR SDK not available — running in standalone mode");
