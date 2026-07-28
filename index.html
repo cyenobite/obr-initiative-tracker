@@ -159,7 +159,7 @@
       background: #1a1614;
     }
     .add-area { background: rgba(0,0,0,0.8); border: 0.5px solid var(--border); border-radius: 10px; padding: 12px; }
-    .add-row { display: grid; grid-template-columns: 1fr 70px 90px; gap: 8px; align-items: end; }
+    .add-row { display: grid; grid-template-columns: 1fr 90px; gap: 8px; align-items: end; }
     .field { display: flex; flex-direction: column; gap: 4px; }
     .field label { font-size: 11px; color: #c8b8b0; text-transform: uppercase; letter-spacing: 0.06em; }
     .field input, .field select {
@@ -224,10 +224,6 @@
           <input type="text" id="inp-name" placeholder="Combatant name" maxlength="30">
         </div>
         <div class="field">
-          <label>Initiative</label>
-          <input type="number" id="inp-init" min="1" max="30" step="0.1">
-        </div>
-        <div class="field">
           <label>Type</label>
           <select id="inp-type">
             <option value="Player">Player</option>
@@ -269,7 +265,6 @@
   const typeBg = { Player: '#1a3a2a', Monster: '#3a1a18', NPC: '#3a2e10' };
 
   function randInit() { return Math.floor(Math.random() * 20) + 1; }
-  function freshRoll() { document.getElementById('inp-init').value = randInit(); }
   function formatInit(val) { return Number.isInteger(val) ? val.toString() : val.toFixed(1); }
   function parseInit(str) {
     const val = parseFloat(str);
@@ -410,13 +405,12 @@
 
   window.addCombatant = function() {
     const name = document.getElementById('inp-name').value.trim();
-    const init = parseInit(document.getElementById('inp-init').value);
     const type = document.getElementById('inp-type').value;
-    if (!name || init === null) return;
+    if (!name) return;
+    const init = randInit();
     combatants.push({ name, init, type, id: Date.now() + Math.random(), cn: false, cnTurns: 0 });
     sortCombatants();
     document.getElementById('inp-name').value = '';
-    freshRoll();
     confirmingId = null;
     render();
     setTimeout(() => {
@@ -636,13 +630,9 @@
   }
 
   document.getElementById('inp-name').addEventListener('keydown', e => {
-    if (e.key === 'Enter') document.getElementById('inp-init').focus();
-  });
-  document.getElementById('inp-init').addEventListener('keydown', e => {
     if (e.key === 'Enter') window.addCombatant();
   });
 
-  freshRoll();
   render();
 </script>
 </body>
