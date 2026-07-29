@@ -333,7 +333,7 @@
               const players = await OBR.party.getPlayers();
               const isPlayer = players.some(p => p.id === item.createdUserId);
               combatants.push({
-                name: item.name || 'Unknown',
+                name: (item.name || 'Unknown').replace(/\s+Token$/i, ''),
                 init: meta.initiative || randInit(),
                 type: isPlayer ? 'Player' : 'Monster',
                 id: Date.now() + Math.random(),
