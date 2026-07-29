@@ -34,7 +34,7 @@
           },
         },
       ],
-      onClick(context) {
+      async onClick(context) {
         const addToInitiative = context.items.every(
           (item) => item.metadata[`${ID}/metadata`] === undefined
         );
