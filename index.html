@@ -273,93 +273,62 @@
   }
 
   // Set up OBR features only if SDK loaded successfully
+async function syncItemToCombatants(item) {
+    let changed = false;
+    const meta = item.metadata[`${ID}/metadata`];
+    if (meta) {
+      const exists = combatants.some(c => c.tokenId === item.id);
+      if (!exists) {
+        combatants.push({
+          name: (item.name || 'Unknown').replace(/\s+Token$/i, ''),
+          init: meta.initiative || randInit(),
+          type: meta.type || 'Monster',
+          id: Date.now() + Math.random(),
+          tokenId: item.id,
+          hidden: item.visible === false,
+          cn: false,
+          cnTurns: 0
+        });
+        changed = true;
+      }
+      const existing = combatants.find(c => c.tokenId === item.id);
+      if (existing) {
+        const nowHidden = item.visible === false;
+        if (existing.hidden !== nowHidden) {
+          existing.hidden = nowHidden;
+          changed = true;
+        }
+      }
+    } else {
+      const idx = combatants.findIndex(c => c.tokenId === item.id);
+      if (idx !== -1) {
+        combatants.splice(idx, 1);
+        if (activeIndex >= combatants.length) activeIndex = 0;
+        changed = true;
+      }
+    }
+    return changed;
+  }
+
   if (OBR) {
     OBR.onReady(async () => {
-      // Register context menu
-      OBR.contextMenu.create({
-        id: `${ID}/context-menu`,
-        icons: [
-          {
-            icon: "/obr-initiative-tracker/add.svg",
-            label: "Add to Initiative",
-            filter: {
-              every: [
-                { key: "layer", value: "CHARACTER" },
-                { key: ["metadata", `${ID}/metadata`], value: undefined },
-              ],
-            },
-          },
-          {
-            icon: "/obr-initiative-tracker/remove.svg",
-            label: "Remove from Initiative",
-            filter: {
-              every: [
-                { key: "layer", value: "CHARACTER" },
-              ],
-            },
-          },
-        ],
-        onClick(context) {
-          const addToInitiative = context.items.every(
-            (item) => item.metadata[`${ID}/metadata`] === undefined
-          );
-          if (addToInitiative) {
-            OBR.scene.items.updateItems(context.items, (items) => {
-              for (let item of items) {
-                item.metadata[`${ID}/metadata`] = {
-                  name: item.name,
-                  initiative: randInit(),
-                };
-              }
-            });
-          } else {
-            OBR.scene.items.updateItems(context.items, (items) => {
-              for (let item of items) {
-                delete item.metadata[`${ID}/metadata`];
-              }
-            });
-          }
-        },
-      });
+      // Load any tokens that already have initiative data when the tracker opens
+      const existingItems = await OBR.scene.items.getItems(
+        (item) => item.metadata[`${ID}/metadata`] !== undefined
+      );
+      let hadExisting = false;
+      for (const item of existingItems) {
+        const didChange = await syncItemToCombatants(item);
+        hadExisting = hadExisting || didChange;
+      }
+      if (hadExisting) { sortCombatants(); render(); }
 
       // Watch for metadata changes to sync tracker
       OBR.scene.items.onChange(async (items) => {
         let changed = false;
         for (const item of items) {
-          const meta = item.metadata[`${ID}/metadata`];
-          if (meta) {
-            const exists = combatants.some(c => c.tokenId === item.id);
-            if (!exists) {
-              const players = await OBR.party.getPlayers();
-              const isPlayer = players.some(p => p.id === item.createdUserId);
-              combatants.push({
-                name: (item.name || 'Unknown').replace(/\s+Token$/i, ''),
-                init: meta.initiative || randInit(),
-                type: isPlayer ? 'Player' : 'Monster',
-                id: Date.now() + Math.random(),
-                tokenId: item.id,
-                hidden: item.visible === false,
-                cn: false,
-                cnTurns: 0
-              });
-              changed = true;
-            }
-            const existing = combatants.find(c => c.tokenId === item.id);
-            if (existing) {
-              const nowHidden = item.visible === false;
-              if (existing.hidden !== nowHidden) {
-                existing.hidden = nowHidden;
-                changed = true;
-              }
-            }
-          } else {
-            const idx = combatants.findIndex(c => c.tokenId === item.id);
-            if (idx !== -1) {
-              combatants.splice(idx, 1);
-              if (activeIndex >= combatants.length) activeIndex = 0;
-              changed = true;
-            }
-          }
+          const didChange = await syncItemToCombatants(item);
+          changed = changed || didChange;
         }
         if (changed) {
           sortCombatants();
