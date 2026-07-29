@@ -41,11 +41,14 @@
         if (addToInitiative) {
           // Add each selected token to initiative
           const initiative = Math.floor(Math.random() * 20) + 1;
+          const players = await OBR.party.getPlayers();
           OBR.scene.items.updateItems(context.items, (items) => {
             for (let item of items) {
+              const isPlayer = players.some(p => p.id === item.createdUserId);
               item.metadata[`${ID}/metadata`] = {
                 name: item.name,
                 initiative: initiative,
+                type: isPlayer ? 'Player' : 'Monster',
               };
             }
           });
