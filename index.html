@@ -391,6 +391,14 @@ async function syncItemToCombatants(item) {
   function removeCombatant(id) {
     const idx = combatants.findIndex(c => c.id === id);
     const wasActive = idx === activeIndex;
+    const target = combatants[idx];
+    if (target && target.tokenId && OBR) {
+      OBR.scene.items.updateItems([target.tokenId], (items) => {
+        for (let item of items) {
+          delete item.metadata[`${ID}/metadata`];
+        }
+      });
+    }
     combatants = combatants.filter(c => c.id !== id);
     confirmingId = null; editingInitId = null; editingTypeId = null;
     if (combatants.length === 0) { activeIndex = 0; state = 'idle'; }
