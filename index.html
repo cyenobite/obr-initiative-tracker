@@ -310,12 +310,15 @@ async function syncItemToCombatants(item) {
     return changed;
   }
 
+  console.log('[Tracker Debug] OBR loaded?', !!OBR);
   if (OBR) {
     OBR.onReady(async () => {
+      console.log('[Tracker Debug] onReady fired');
       // Load any tokens that already have initiative data when the tracker opens
       const existingItems = await OBR.scene.items.getItems(
         (item) => item.metadata[`${ID}/metadata`] !== undefined
       );
+      console.log('[Tracker Debug] existing items found:', existingItems.length);
       let hadExisting = false;
       for (const item of existingItems) {
         const didChange = await syncItemToCombatants(item);
@@ -325,6 +328,7 @@ async function syncItemToCombatants(item) {
 
       // Watch for metadata changes to sync tracker
       OBR.scene.items.onChange(async (items) => {
+        console.log('[Tracker Debug] onChange fired, items:', items.length);
         let changed = false;
         for (const item of items) {
           const didChange = await syncItemToCombatants(item);
