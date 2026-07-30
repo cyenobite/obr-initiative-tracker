@@ -310,30 +310,72 @@ async function syncItemToCombatants(item) {
     return changed;
   }
 
-  console.log('[Tracker Debug] OBR loaded?', !!OBR);
-  if (OBR) {
-    OBR.onReady(async () => {
-      console.log('[Tracker Debug] onReady fired');
-      // Load any tokens that already have initiative data when the tracker opens
-      let existingItems = [];
-      try {
-        existingItems = await OBR.scene.items.getItems(
-          (item) => item.metadata[`${ID}/metadata`] !== undefined
-        );
-        console.log('[Tracker Debug] existing items found:', existingItems.length);
-      } catch (err) {
-        console.log('[Tracker Debug] getItems ERROR:', err && err.message ? err.message : JSON.stringify(err));
+  function syncManualToCombatants(manualList) {
+    let changed = false;
+    for (const entry of manualList) {
+      const exists = combatants.some(c => c.id === entry.id);
+      if (!exists) {
+        combatants.push({
+          name: entry.name,
+          init: entry.init,
+          type: entry.type,
+          id: entry.id,
+          tokenId: null,
+          hidden: false,
+          cn: false,
+          cnTurns: 0
+        });
+        changed = true;
       }
-      let hadExisting = false;
+    }
+    const manualIds = new Set(manualList.map(e => e.id));
+    const toRemove = combatants.filter(c => !c.tokenId && !manualIds.has(c.id));
+    for (const c of toRemove) {
+      const idx = combatants.findIndex(x => x.id === c.id);
+      if (idx !== -1) {
+        combatants.splice(idx, 1);
+        if (activeIndex >= combatants.length) activeIndex = 0;
+        changed = true;
+      }
+    }
+    return changed;
+  }
+
+  async function loadInitialState() {
+    let changed = false;
+    try {
+      const existingItems = await OBR.scene.items.getItems(
+        (item) => item.metadata[`${ID}/metadata`] !== undefined
+      );
       for (const item of existingItems) {
         const didChange = await syncItemToCombatants(item);
-        hadExisting = hadExisting || didChange;
+        changed = changed || didChange;
       }
-      if (hadExisting) { sortCombatants(); render(); }
+    } catch (err) {
+      // Scene wasn't ready yet; onReadyChange below will retry.
+    }
+    try {
+      const metadata = await OBR.scene.getMetadata();
+      const manualList = metadata[`${ID}/manual`] || [];
+      const didChange = syncManualToCombatants(manualList);
+      changed = changed || didChange;
+    } catch (err) {
+      // Scene wasn't ready yet; onReadyChange below will retry.
+    }
+    if (changed) { sortCombatants(); render(); }
+  }
 
-      // Watch for metadata changes to sync tracker
+  if (OBR) {
+    OBR.onReady(async () => {
+      const ready = await OBR.scene.isReady();
+      if (ready) await loadInitialState();
+
+      OBR.scene.onReadyChange(async (isReady) => {
+        if (isReady) await loadInitialState();
+      });
+
+      // Watch for token add/remove changes
       OBR.scene.items.onChange(async (items) => {
-        console.log('[Tracker Debug] onChange fired, items:', items.length);
         let changed = false;
         for (const item of items) {
           const didChange = await syncItemToCombatants(item);
@@ -346,6 +388,15 @@ async function syncItemToCombatants(item) {
             const area = document.querySelector('.scroll-area');
             if (area) area.scrollTop = area.scrollHeight;
           }, 30);
+        }
+      });
+
+      // Watch for manually-added combatants shared by other players
+      OBR.scene.onMetadataChange(async (metadata) => {
+        const manualList = metadata[`${ID}/manual`] || [];
+        if (syncManualToCombatants(manualList)) {
+          sortCombatants();
+          render();
         }
       });
     });
