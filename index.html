@@ -461,11 +461,16 @@ async function syncItemToCombatants(item) {
     const idx = combatants.findIndex(c => c.id === id);
     const wasActive = idx === activeIndex;
     const target = combatants[idx];
-    if (target && target.tokenId && OBR) {
+if (target && target.tokenId && OBR) {
       OBR.scene.items.updateItems([target.tokenId], (items) => {
         for (let item of items) {
           delete item.metadata[`${ID}/metadata`];
         }
+      });
+    } else if (target && !target.tokenId && OBR) {
+      OBR.scene.getMetadata().then((metadata) => {
+        const manualList = (metadata[`${ID}/manual`] || []).filter(e => e.id !== target.id);
+        OBR.scene.setMetadata({ [`${ID}/manual`]: manualList });
       });
     }
     combatants = combatants.filter(c => c.id !== id);
