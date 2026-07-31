@@ -553,22 +553,24 @@ if (target && target.tokenId && OBR) {
   }
 
   window.startCombat = function() {
-    if (combatants.length === 0) return;
-    state = 'active'; activeIndex = 0; round = 1;
-    document.getElementById('round-num').textContent = '1';
-    confirmingId = null; editingInitId = null; editingTypeId = null;
-    render(); scrollToActive();
-  }
+if (combatants.length === 0) return;
+state = 'active'; activeIndex = 0; round = 1;
+document.getElementById('round-num').textContent = '1';
+confirmingId = null; editingInitId = null; editingTypeId = null;
+render(); scrollToActive();
+pushCombatState();
+}
 
-  window.nextTurn = function() {
-    if (state !== 'active' || combatants.length === 0) return;
-    const current = combatants[activeIndex];
-    if (current && current.cn) current.cnTurns++;
-    activeIndex = (activeIndex + 1) % combatants.length;
-    if (activeIndex === 0) { round++; document.getElementById('round-num').textContent = round; }
-    playDing();
-    render(); scrollToActive();
-  }
+window.nextTurn = function() {
+if (state !== 'active' || combatants.length === 0) return;
+const current = combatants[activeIndex];
+if (current && current.cn) current.cnTurns++;
+activeIndex = (activeIndex + 1) % combatants.length;
+if (activeIndex === 0) { round++; document.getElementById('round-num').textContent = round; }
+playDing();
+render(); scrollToActive();
+pushCombatState();
+}
 
   function scrollToActive() {
     setTimeout(() => {
