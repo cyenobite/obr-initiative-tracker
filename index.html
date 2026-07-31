@@ -444,7 +444,8 @@ if (activeIndex < 0) activeIndex = 0;
 
 function pushCombatState() {
 if (!OBR) return;
-const activeId = combatants[activeIndex] ? combatants[activeIndex].id : null;
+const active = combatants[activeIndex];
+const activeId = active ? (active.tokenId || active.id) : null;
 OBR.scene.setMetadata({ [`${ID}/combat`]: { state, activeId, round } });
 }
 
@@ -454,7 +455,7 @@ state = combat.state;
 round = combat.round;
 const roundEl = document.getElementById('round-num');
 if (roundEl) roundEl.textContent = round;
-const idx = combat.activeId != null ? combatants.findIndex(c => c.id === combat.activeId) : -1;
+const idx = combat.activeId != null ? combatants.findIndex(c => (c.tokenId || c.id) === combat.activeId) : -1;
 activeIndex = idx !== -1 ? idx : 0;
 }
 
