@@ -426,11 +426,27 @@ async function syncItemToCombatants(item) {
   }
 
   function sortCombatants() {
-    const active = combatants[activeIndex];
-    combatants.sort((a, b) => b.init - a.init || a.name.localeCompare(b.name));
-    if (active) activeIndex = combatants.findIndex(c => c.id === active.id);
-    if (activeIndex < 0) activeIndex = 0;
-  }
+const active = combatants[activeIndex];
+combatants.sort((a, b) => b.init - a.init || a.name.localeCompare(b.name));
+if (active) activeIndex = combatants.findIndex(c => c.id === active.id);
+if (activeIndex < 0) activeIndex = 0;
+}
+
+function pushCombatState() {
+if (!OBR) return;
+const activeId = combatants[activeIndex] ? combatants[activeIndex].id : null;
+OBR.scene.setMetadata({ [`${ID}/combat`]: { state, activeId, round } });
+}
+
+function applyCombatMetadata(combat) {
+if (!combat) return;
+state = combat.state;
+round = combat.round;
+const roundEl = document.getElementById('round-num');
+if (roundEl) roundEl.textContent = round;
+const idx = combat.activeId != null ? combatants.findIndex(c => c.id === combat.activeId) : -1;
+activeIndex = idx !== -1 ? idx : 0;
+}
 
   window.addCombatant = function() {
     const name = document.getElementById('inp-name').value.trim();
