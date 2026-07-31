@@ -391,14 +391,24 @@ async function syncItemToCombatants(item) {
         }
       });
 
-      // Watch for manually-added combatants shared by other players
-      OBR.scene.onMetadataChange(async (metadata) => {
-        const manualList = metadata[`${ID}/manual`] || [];
-        if (syncManualToCombatants(manualList)) {
-          sortCombatants();
-          render();
-        }
-      });
+      // Watch for manually-added combatants AND combat-state changes shared by other players
+OBR.scene.onMetadataChange(async (metadata) => {
+const manualList = metadata[`${ID}/manual`] || [];
+let needsRender = false;
+if (syncManualToCombatants(manualList)) {
+sortCombatants();
+needsRender = true;
+}
+const combat = metadata[`${ID}/combat`];
+if (combat) {
+applyCombatMetadata(combat);
+needsRender = true;
+}
+if (needsRender) {
+render();
+scrollToActive();
+}
+});
     });
   }
 
