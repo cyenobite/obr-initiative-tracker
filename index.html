@@ -580,19 +580,20 @@ pushCombatState();
     }, 30);
   }
 
-  window.pauseCombat = function() { state = 'paused'; render(); }
-  window.resumeCombat = function() { state = 'active'; render(); }
+  window.pauseCombat = function() { state = 'paused'; render(); pushCombatState(); }
+window.resumeCombat = function() { state = 'active'; render(); pushCombatState(); }
 
   window.resetCombat = function() {
-    const keep = combatants.filter(c => c.type === 'Player' || c.type === 'NPC');
-    keep.forEach(c => { c.init = randInit(); c.cn = false; c.cnTurns = 0; });
-    combatants = keep;
-    activeIndex = 0; round = 1; state = 'idle';
-    confirmingId = null; editingInitId = null; editingTypeId = null;
-    sortCombatants();
-    document.getElementById('round-num').textContent = '1';
-    render();
-  }
+const keep = combatants.filter(c => c.type === 'Player' || c.type === 'NPC');
+keep.forEach(c => { c.init = randInit(); c.cn = false; c.cnTurns = 0; });
+combatants = keep;
+activeIndex = 0; round = 1; state = 'idle';
+confirmingId = null; editingInitId = null; editingTypeId = null;
+sortCombatants();
+document.getElementById('round-num').textContent = '1';
+render();
+pushCombatState();
+}
 
   window.selectCombatant = function(idx, id) {
     if (editingInitId !== null || editingTypeId !== null) return;
