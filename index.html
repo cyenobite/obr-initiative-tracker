@@ -292,13 +292,21 @@ async function syncItemToCombatants(item) {
         changed = true;
       }
       const existing = combatants.find(c => c.tokenId === item.id);
-      if (existing) {
-        const nowHidden = item.visible === false;
-        if (existing.hidden !== nowHidden) {
-          existing.hidden = nowHidden;
-          changed = true;
-        }
-      }
+if (existing) {
+const nowHidden = item.visible === false;
+if (existing.hidden !== nowHidden) {
+existing.hidden = nowHidden;
+changed = true;
+}
+if (meta.cn !== undefined && existing.cn !== meta.cn) {
+existing.cn = meta.cn;
+changed = true;
+}
+if (meta.cnTurns !== undefined && existing.cnTurns !== meta.cnTurns) {
+existing.cnTurns = meta.cnTurns;
+changed = true;
+}
+}
     } else {
       const idx = combatants.findIndex(c => c.tokenId === item.id);
       if (idx !== -1) {
