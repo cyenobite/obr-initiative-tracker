@@ -595,7 +595,7 @@ pushCombatState();
 window.nextTurn = function() {
 if (state !== 'active' || combatants.length === 0) return;
 const current = combatants[activeIndex];
-if (current && current.cn) current.cnTurns++;
+if (current && current.cn) { current.cnTurns++; pushCombatantState(current); }
 activeIndex = (activeIndex + 1) % combatants.length;
 if (activeIndex === 0) { round++; document.getElementById('round-num').textContent = round; }
 playDing();
