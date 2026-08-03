@@ -459,6 +459,25 @@ const idx = combat.activeId != null ? combatants.findIndex(c => (c.tokenId || c.
 activeIndex = idx !== -1 ? idx : 0;
 }
 
+function pushCombatantState(c) {
+if (!OBR || !c) return;
+if (c.tokenId) {
+OBR.scene.items.updateItems([c.tokenId], (items) => {
+for (let item of items) {
+const meta = item.metadata[`${ID}/metadata`];
+if (meta) { meta.cn = c.cn; meta.cnTurns = c.cnTurns; }
+}
+});
+} else {
+OBR.scene.getMetadata().then((metadata) => {
+const manualList = (metadata[`${ID}/manual`] || []).map(e =>
+e.id === c.id ? { ...e, cn: c.cn, cnTurns: c.cnTurns } : e
+);
+OBR.scene.setMetadata({ [`${ID}/manual`]: manualList });
+});
+}
+}
+
   window.addCombatant = function() {
     const name = document.getElementById('inp-name').value.trim();
     const type = document.getElementById('inp-type').value;
