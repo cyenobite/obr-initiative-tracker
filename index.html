@@ -318,11 +318,11 @@ changed = true;
     return changed;
   }
 
-  function syncManualToCombatants(manualList) {
+function syncManualToCombatants(manualList) {
     let changed = false;
     for (const entry of manualList) {
-      const exists = combatants.some(c => c.id === entry.id);
-      if (!exists) {
+      const existing = combatants.find(c => c.id === entry.id);
+      if (!existing) {
         combatants.push({
           name: entry.name,
           init: entry.init,
@@ -334,6 +334,9 @@ changed = true;
           cnTurns: 0
         });
         changed = true;
+      } else {
+        if (entry.cn !== undefined && existing.cn !== entry.cn) { existing.cn = entry.cn; changed = true; }
+        if (entry.cnTurns !== undefined && existing.cnTurns !== entry.cnTurns) { existing.cnTurns = entry.cnTurns; changed = true; }
       }
     }
     const manualIds = new Set(manualList.map(e => e.id));
