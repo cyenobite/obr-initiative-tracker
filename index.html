@@ -532,12 +532,13 @@ if (target && target.tokenId && OBR) {
   window.removeCombatant = removeCombatant;
 
   window.toggleCN = function(id) {
-    const c = combatants.find(c => c.id === id);
-    if (!c) return;
-    c.cn = !c.cn;
-    if (!c.cn) c.cnTurns = 0;
-    render();
-  }
+const c = combatants.find(c => c.id === id);
+if (!c) return;
+c.cn = !c.cn;
+if (!c.cn) c.cnTurns = 0;
+render();
+pushCombatantState(c);
+}
 
   window.requestRemove = function(id) {
     confirmingId = (confirmingId === id) ? null : id;
