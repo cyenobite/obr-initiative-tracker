@@ -291,7 +291,7 @@ async function syncItemToCombatants(item) {
         });
         changed = true;
       }
-      const existing = combatants.find(c => c.tokenId === item.id);
+const existing = combatants.find(c => c.tokenId === item.id);
 if (existing) {
 const nowHidden = item.visible === false;
 if (existing.hidden !== nowHidden) {
@@ -304,6 +304,10 @@ changed = true;
 }
 if (meta.cnTurns !== undefined && existing.cnTurns !== meta.cnTurns) {
 existing.cnTurns = meta.cnTurns;
+changed = true;
+}
+if (meta.initiative !== undefined && existing.init !== meta.initiative) {
+existing.init = meta.initiative;
 changed = true;
 }
 }
@@ -334,10 +338,11 @@ function syncManualToCombatants(manualList) {
           cnTurns: 0
         });
         changed = true;
-      } else {
-        if (entry.cn !== undefined && existing.cn !== entry.cn) { existing.cn = entry.cn; changed = true; }
-        if (entry.cnTurns !== undefined && existing.cnTurns !== entry.cnTurns) { existing.cnTurns = entry.cnTurns; changed = true; }
-      }
+} else {
+if (entry.cn !== undefined && existing.cn !== entry.cn) { existing.cn = entry.cn; changed = true; }
+if (entry.cnTurns !== undefined && existing.cnTurns !== entry.cnTurns) { existing.cnTurns = entry.cnTurns; changed = true; }
+if (entry.init !== undefined && existing.init !== entry.init) { existing.init = entry.init; changed = true; }
+}
     }
     const manualIds = new Set(manualList.map(e => e.id));
     const toRemove = combatants.filter(c => !c.tokenId && !manualIds.has(c.id));
