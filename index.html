@@ -566,15 +566,19 @@ pushCombatantState(c);
     }, 20);
   }
 
-  window.commitInitEdit = function(id) {
-    const inp = document.getElementById('init-edit-' + id);
-    if (!inp) return;
-    const val = parseInit(inp.value);
-    const c = combatants.find(c => c.id === id);
-    if (c && val !== null && val >= 1 && val <= 30) { c.init = val; sortCombatants(); }
-    editingInitId = null;
-    render();
-  }
+window.commitInitEdit = function(id) {
+const inp = document.getElementById('init-edit-' + id);
+if (!inp) return;
+const val = parseInit(inp.value);
+const c = combatants.find(c => c.id === id);
+if (c && val !== null && val >= 1 && val <= 30) {
+c.init = val;
+sortCombatants();
+pushCombatantState(c);
+}
+editingInitId = null;
+render();
+}
 
   window.startEditType = function(id) {
     editingTypeId = id; editingInitId = null; confirmingId = null;
