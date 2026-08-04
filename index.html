@@ -476,13 +476,13 @@ if (c.tokenId) {
 OBR.scene.items.updateItems([c.tokenId], (items) => {
 for (let item of items) {
 const meta = item.metadata[`${ID}/metadata`];
-if (meta) { meta.cn = c.cn; meta.cnTurns = c.cnTurns; }
+if (meta) { meta.cn = c.cn; meta.cnTurns = c.cnTurns; meta.initiative = c.init; }
 }
 });
 } else {
 OBR.scene.getMetadata().then((metadata) => {
 const manualList = (metadata[`${ID}/manual`] || []).map(e =>
-e.id === c.id ? { ...e, cn: c.cn, cnTurns: c.cnTurns } : e
+e.id === c.id ? { ...e, cn: c.cn, cnTurns: c.cnTurns, init: c.init } : e
 );
 OBR.scene.setMetadata({ [`${ID}/manual`]: manualList });
 });
