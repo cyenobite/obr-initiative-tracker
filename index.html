@@ -495,29 +495,30 @@ OBR.scene.setMetadata({ [`${ID}/manual`]: manualList });
 }
 
   window.addCombatant = function() {
-    const name = document.getElementById('inp-name').value.trim();
-    const type = document.getElementById('inp-type').value;
-    if (!name) return;
-    const init = randInit();
-    const newEntry = { name, init, type, id: Date.now() + Math.random(), cn: false, cnTurns: 0 };
-    combatants.push(newEntry);
-    sortCombatants();
-    document.getElementById('inp-name').value = '';
-    confirmingId = null;
-    render();
-    setTimeout(() => {
-      const area = document.querySelector('.scroll-area');
-      if (area) area.scrollTop = area.scrollHeight;
-    }, 30);
-    // Share this manual entry with everyone else connected to the scene
-    if (OBR) {
-      OBR.scene.getMetadata().then((metadata) => {
-        const manualList = metadata[`${ID}/manual`] || [];
-        manualList.push({ id: newEntry.id, name: newEntry.name, init: newEntry.init, type: newEntry.type });
-        OBR.scene.setMetadata({ [`${ID}/manual`]: manualList });
-      });
-    }
-  }
+const name = document.getElementById('inp-name').value.trim();
+const type = document.getElementById('inp-type').value;
+if (!name) return;
+const roll = randInit();
+const mod = 0;
+const newEntry = { name, init: roll + mod, roll, mod, type, id: Date.now() + Math.random(), cn: false, cnTurns: 0 };
+combatants.push(newEntry);
+sortCombatants();
+document.getElementById('inp-name').value = '';
+confirmingId = null;
+render();
+setTimeout(() => {
+const area = document.querySelector('.scroll-area');
+if (area) area.scrollTop = area.scrollHeight;
+}, 30);
+// Share this manual entry with everyone else connected to the scene
+if (OBR) {
+OBR.scene.getMetadata().then((metadata) => {
+const manualList = metadata[`${ID}/manual`] || [];
+manualList.push({ id: newEntry.id, name: newEntry.name, init: newEntry.init, roll: newEntry.roll, mod: newEntry.mod, type: newEntry.type });
+OBR.scene.setMetadata({ [`${ID}/manual`]: manualList });
+});
+}
+}
 
   function removeCombatant(id) {
     const idx = combatants.findIndex(c => c.id === id);
