@@ -274,23 +274,27 @@
 
   // Set up OBR features only if SDK loaded successfully
 async function syncItemToCombatants(item) {
-    let changed = false;
-    const meta = item.metadata[`${ID}/metadata`];
-    if (meta) {
-      const exists = combatants.some(c => c.tokenId === item.id);
-      if (!exists) {
-        combatants.push({
-          name: (item.name || 'Unknown').replace(/\s+Token$/i, ''),
-          init: meta.initiative || randInit(),
-          type: meta.type || 'Monster',
-          id: Date.now() + Math.random(),
-          tokenId: item.id,
-          hidden: item.visible === false,
-          cn: false,
-          cnTurns: 0
-        });
-        changed = true;
-      }
+let changed = false;
+const meta = item.metadata[`${ID}/metadata`];
+if (meta) {
+const exists = combatants.some(c => c.tokenId === item.id);
+if (!exists) {
+const roll = meta.roll !== undefined ? meta.roll : (meta.initiative !== undefined ? meta.initiative : randInit());
+const mod = meta.mod !== undefined ? meta.mod : 0;
+combatants.push({
+name: (item.name || 'Unknown').replace(/\s+Token$/i, ''),
+init: roll + mod,
+roll: roll,
+mod: mod,
+type: meta.type || 'Monster',
+id: Date.now() + Math.random(),
+tokenId: item.id,
+hidden: item.visible === false,
+cn: false,
+cnTurns: 0
+});
+changed = true;
+}
 const existing = combatants.find(c => c.tokenId === item.id);
 if (existing) {
 const nowHidden = item.visible === false;
