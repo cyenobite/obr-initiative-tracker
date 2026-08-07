@@ -745,14 +745,7 @@ onkeydown="if(event.key==='Enter'){event.stopPropagation();window.commitModEdit(
 onblur="window.commitModEdit(${c.id})">`
 : `<div class="init-box" onclick="event.stopPropagation(); window.startEditMod(${c.id})" title="Click to edit modifier">${modVal >= 0 ? '+' + modVal : modVal}</div>`;
 
-const isEditingMod = editingModId === c.id;
-const modVal = c.mod !== undefined ? c.mod : 0;
-const modCell = isEditingMod
-? `<input class="init-input" id="mod-edit-${c.id}" type="number" step="1" value="${modVal}"
-onclick="event.stopPropagation()"
-onkeydown="if(event.key==='Enter'){event.stopPropagation();window.commitModEdit(${c.id});}if(event.key==='Escape'){editingModId=null;render();}"
-onblur="window.commitModEdit(${c.id})">`
-: `<div class="init-box" onclick="event.stopPropagation(); window.startEditMod(${c.id})" title="Click to edit modifier">${modVal >= 0 ? '+' + modVal : modVal}</div>`;
+
       const typeCell = isEditingType
         ? `<select class="ctype-select" id="type-edit-${c.id}"
              onclick="event.stopPropagation()"
