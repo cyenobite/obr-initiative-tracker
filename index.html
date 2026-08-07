@@ -57,10 +57,10 @@
     .scroll-area::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
     .combatant-list { display: flex; flex-direction: column; gap: 6px; }
     .edit-hint { font-size: 10px; color: var(--text3); text-align: center; margin-bottom: 6px; letter-spacing: 0.02em; }
-    .combatant {
-      display: grid;
-      grid-template-columns: 10px 42px 1fr auto auto auto;
-      align-items: center;
+.combatant {
+display: grid;
+grid-template-columns: 10px 42px 42px 1fr auto auto auto;
+align-items: center;
       gap: 8px;
       background: var(--bg2);
       border: 0.5px solid var(--border);
@@ -771,11 +771,12 @@ onblur="window.commitModEdit(${c.id})">`
         ? `<span class="active-label" style="color:var(--accent)">&nbsp;&middot;&nbsp; Active</span>` : '';
       const deckLabel = isActive && state === 'paused'
         ? `<span class="active-label" style="color:var(--pause2)">&nbsp;&middot;&nbsp; On deck</span>` : '';
-      div.innerHTML = `
-        <div class="left-dot"></div>
-        ${initCell}
-        <div>
-          <div class="cname">${c.name}</div>
+div.innerHTML = `
+<div class="left-dot"></div>
+${initCell}
+${modCell}
+<div>
+<div class="cname">${c.name}</div>
           <div class="ctype-wrap">
             ${typeCell}${activeLabel}${deckLabel}
           </div>
