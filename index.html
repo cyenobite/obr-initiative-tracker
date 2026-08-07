@@ -259,6 +259,7 @@
   let confirmingId = null;
   let editingInitId = null;
   let editingTypeId = null;
+let editingModId = null;
   let soundOn = true;
 
   const typeColors = { Player: '#5DCAA5', Monster: '#e74c3c', NPC: '#c9a84c' };
@@ -591,13 +592,36 @@ render();
 }
 
   window.startEditType = function(id) {
-    editingTypeId = id; editingInitId = null; confirmingId = null;
-    render();
-    setTimeout(() => {
-      const sel = document.getElementById('type-edit-' + id);
-      if (sel) sel.focus();
-    }, 20);
-  }
+editingTypeId = id; editingInitId = null; confirmingId = null;
+render();
+setTimeout(() => {
+const sel = document.getElementById('type-edit-' + id);
+if (sel) sel.focus();
+}, 20);
+}
+
+window.startEditMod = function(id) {
+editingModId = id; editingInitId = null; editingTypeId = null; confirmingId = null;
+render();
+setTimeout(() => {
+const inp = document.getElementById('mod-edit-' + id);
+if (inp) { inp.focus(); inp.select(); }
+}, 20);
+}
+
+window.commitModEdit = function(id) {
+const inp = document.getElementById('mod-edit-' + id);
+if (!inp) return;
+const val = parseInt(inp.value, 10);
+const c = combatants.find(c => c.id === id);
+if (c && !isNaN(val)) {
+c.mod = val;
+c.init = c.roll + c.mod;
+sortCombatants();
+}
+editingModId = null;
+render();
+}
 
   window.commitTypeEdit = function(id) {
     const sel = document.getElementById('type-edit-' + id);
