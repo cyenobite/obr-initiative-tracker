@@ -677,6 +677,7 @@ pushCombatState();
 window.resumeCombat = function() { state = 'active'; render(); pushCombatState(); }
 
 window.resetCombat = function() {
+const removed = combatants.filter(c => c.type === 'Monster');
 const keep = combatants.filter(c => c.type === 'Player' || c.type === 'NPC');
 keep.forEach(c => {
 c.roll = randInit();
@@ -684,7 +685,6 @@ c.mod = c.mod !== undefined ? c.mod : 0;
 c.init = c.roll + c.mod;
 c.cn = false;
 c.cnTurns = 0;
-pushCombatantState(c);
 });
 combatants = keep;
 activeIndex = 0; round = 1; state = 'idle';
@@ -693,6 +693,28 @@ sortCombatants();
 document.getElementById('round-num').textContent = '1';
 render();
 pushCombatState();
+
+if (OBR) {
+const removedTokenIds = removed.filter(c => c.tokenId).map(c => c.tokenId);
+if (removedTokenIds.length > 0) {
+OBR.scene.items.updateItems(removedTokenIds, (items) => {
+for (let item of items) {
+delete item.metadata[`${ID}/metadata`];
+}
+});
+}
+keep.filter(c => c.tokenId).forEach(c => pushCombatantState(c));
+const removedManualIds = new Set(removed.filter(c => !c.tokenId).map(c => c.id));
+OBR.scene.getMetadata().then((metadata) => {
+let manualList = metadata[`${ID}/manual`] || [];
+manualList = manualList.filter(e => !removedManualIds.has(e.id));
+manualList = manualList.map(e => {
+const c = keep.find(k => !k.tokenId && k.id === e.id);
+return c ? { ...e, roll: c.roll, mod: c.mod, init: c.init, cn: c.cn, cnTurns: c.cnTurns } : e;
+});
+OBR.scene.setMetadata({ [`${ID}/manual`]: manualList });
+});
+}
 }
 
   window.selectCombatant = function(idx, id) {
