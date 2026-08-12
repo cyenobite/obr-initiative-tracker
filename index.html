@@ -676,9 +676,16 @@ pushCombatState();
   window.pauseCombat = function() { state = 'paused'; render(); pushCombatState(); }
 window.resumeCombat = function() { state = 'active'; render(); pushCombatState(); }
 
-  window.resetCombat = function() {
+window.resetCombat = function() {
 const keep = combatants.filter(c => c.type === 'Player' || c.type === 'NPC');
-keep.forEach(c => { c.init = randInit(); c.cn = false; c.cnTurns = 0; });
+keep.forEach(c => {
+c.roll = randInit();
+c.mod = c.mod !== undefined ? c.mod : 0;
+c.init = c.roll + c.mod;
+c.cn = false;
+c.cnTurns = 0;
+pushCombatantState(c);
+});
 combatants = keep;
 activeIndex = 0; round = 1; state = 'idle';
 confirmingId = null; editingInitId = null; editingTypeId = null;
