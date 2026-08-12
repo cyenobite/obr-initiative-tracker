@@ -311,6 +311,14 @@ if (meta.cnTurns !== undefined && existing.cnTurns !== meta.cnTurns) {
 existing.cnTurns = meta.cnTurns;
 changed = true;
 }
+if (meta.roll !== undefined && existing.roll !== meta.roll) {
+existing.roll = meta.roll;
+changed = true;
+}
+if (meta.mod !== undefined && existing.mod !== meta.mod) {
+existing.mod = meta.mod;
+changed = true;
+}
 if (meta.initiative !== undefined && existing.init !== meta.initiative) {
 existing.init = meta.initiative;
 changed = true;
@@ -331,21 +339,25 @@ function syncManualToCombatants(manualList) {
     let changed = false;
     for (const entry of manualList) {
       const existing = combatants.find(c => c.id === entry.id);
-      if (!existing) {
-        combatants.push({
-          name: entry.name,
-          init: entry.init,
-          type: entry.type,
-          id: entry.id,
-          tokenId: null,
-          hidden: false,
-          cn: false,
-          cnTurns: 0
-        });
-        changed = true;
+if (!existing) {
+combatants.push({
+name: entry.name,
+init: entry.init,
+roll: entry.roll !== undefined ? entry.roll : entry.init,
+mod: entry.mod !== undefined ? entry.mod : 0,
+type: entry.type,
+id: entry.id,
+tokenId: null,
+hidden: false,
+cn: false,
+cnTurns: 0
+});
+changed = true;
 } else {
 if (entry.cn !== undefined && existing.cn !== entry.cn) { existing.cn = entry.cn; changed = true; }
 if (entry.cnTurns !== undefined && existing.cnTurns !== entry.cnTurns) { existing.cnTurns = entry.cnTurns; changed = true; }
+if (entry.roll !== undefined && existing.roll !== entry.roll) { existing.roll = entry.roll; changed = true; }
+if (entry.mod !== undefined && existing.mod !== entry.mod) { existing.mod = entry.mod; changed = true; }
 if (entry.init !== undefined && existing.init !== entry.init) { existing.init = entry.init; changed = true; }
 }
     }
