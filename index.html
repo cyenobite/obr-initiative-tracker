@@ -476,10 +476,10 @@ if (activeIndex < 0) activeIndex = 0;
 }
 
 function pushCombatState() {
-if (!OBR) return;
+if (!OBR) return Promise.resolve();
 const active = combatants[activeIndex];
 const activeId = active ? (active.tokenId || active.id) : null;
-OBR.scene.setMetadata({ [`${ID}/combat`]: { state, activeId, round } });
+return OBR.scene.setMetadata({ [`${ID}/combat`]: { state, activeId, round } });
 }
 
 function applyCombatMetadata(combat) {
@@ -691,8 +691,11 @@ activeIndex = 0; round = 1; state = 'idle';
 confirmingId = null; editingInitId = null; editingTypeId = null;
 sortCombatants();
 document.getElementById('round-num').textContent = '1';
+render();
 
 if (OBR) {
+await pushCombatState();
+
 const removedTokenIds = removed.filter(c => c.tokenId).map(c => c.tokenId);
 if (removedTokenIds.length > 0) {
 OBR.scene.items.updateItems(removedTokenIds, (items) => {
@@ -712,9 +715,6 @@ return c ? { ...e, roll: c.roll, mod: c.mod, init: c.init, cn: c.cn, cnTurns: c.
 });
 await OBR.scene.setMetadata({ [`${ID}/manual`]: manualList });
 }
-
-render();
-pushCombatState();
 }
 
   window.selectCombatant = function(idx, id) {
