@@ -427,6 +427,7 @@ if (entry.init !== undefined && existing.init !== entry.init) { existing.init = 
 
       // Watch for manually-added combatants AND combat-state changes shared by other players
 OBR.scene.onMetadataChange(async (metadata) => {
+if (suppressSync) return;
 const manualList = metadata[`${ID}/manual`] || [];
 let needsRender = false;
 if (syncManualToCombatants(manualList)) {
@@ -693,10 +694,10 @@ confirmingId = null; editingInitId = null; editingTypeId = null;
 sortCombatants();
 document.getElementById('round-num').textContent = '1';
 render();
-
 if (OBR) {
+suppressSync = true;
+try {
 await pushCombatState();
-
 const removedTokenIds = removed.filter(c => c.tokenId).map(c => c.tokenId);
 if (removedTokenIds.length > 0) {
 OBR.scene.items.updateItems(removedTokenIds, (items) => {
@@ -715,6 +716,9 @@ const c = keep.find(k => !k.tokenId && k.id === e.id);
 return c ? { ...e, roll: c.roll, mod: c.mod, init: c.init, cn: c.cn, cnTurns: c.cnTurns } : e;
 });
 await OBR.scene.setMetadata({ [`${ID}/manual`]: manualList });
+} finally {
+suppressSync = false;
+}
 }
 }
 
