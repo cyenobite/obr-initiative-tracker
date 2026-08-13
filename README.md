@@ -5,7 +5,7 @@ Disclaimer: This project is meant mostly to teach myself "vibe coding" using Cla
 I know AI is a sensitive topic in the RPG community, so if you don't like it simply don't load this Tracker.
 
 Special thanks to the Dev's of OBR for including a SDK and tutorial for this - I have learned a lot.
-Also special thanks to the helpful extension coders in the Discord server. 
+Also special thanks to the helpful extension coders in the Discord server (Special thanks to Andrew). 
 
 The default Init-tracker in OBR is great! I just wanted to see if I could add a few more features or controls. 
 
