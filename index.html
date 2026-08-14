@@ -680,7 +680,7 @@ pushCombatState();
   window.pauseCombat = function() { state = 'paused'; render(); pushCombatState(); }
 window.resumeCombat = function() { state = 'active'; render(); pushCombatState(); }
 
-window.resetCombat = async function() {
+async function performReset() {
 const removed = combatants.filter(c => c.type === 'Monster');
 const keep = combatants.filter(c => c.type === 'Player' || c.type === 'NPC');
 keep.forEach(c => {
@@ -722,6 +722,21 @@ await OBR.scene.setMetadata({ [`${ID}/manual`]: manualList });
 suppressSync = false;
 }
 }
+}
+
+window.resetCombat = function() {
+if (REQUIRE_RESET_CONFIRM && !confirmingReset) {
+confirmingReset = true;
+render();
+return;
+}
+confirmingReset = false;
+performReset();
+}
+
+window.cancelReset = function() {
+confirmingReset = false;
+render();
 }
 
   window.selectCombatant = function(idx, id) {
