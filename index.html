@@ -747,9 +747,16 @@ render();
   }
 
   function renderActionBar() {
-    const bar = document.getElementById('action-bar');
-    bar.innerHTML = '';
-    if (state === 'idle') {
+const bar = document.getElementById('action-bar');
+bar.innerHTML = '';
+if (confirmingReset) {
+bar.style.gridTemplateColumns = '1fr 1fr';
+const yes = document.createElement('button'); yes.className = 'btn-next'; yes.textContent = 'Yes, reset'; yes.onclick = window.resetCombat;
+const no = document.createElement('button'); no.className = 'btn-reset'; no.textContent = 'Cancel'; no.onclick = window.cancelReset;
+bar.appendChild(yes); bar.appendChild(no);
+return;
+}
+if (state === 'idle') {
       bar.style.gridTemplateColumns = '1fr auto';
       const s = document.createElement('button'); s.className = 'btn-start'; s.textContent = 'Start combat'; s.onclick = window.startCombat;
       const r = document.createElement('button'); r.className = 'btn-reset'; r.textContent = 'Reset'; r.onclick = window.resetCombat;
