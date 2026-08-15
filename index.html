@@ -366,6 +366,7 @@ if (entry.cnTurns !== undefined && existing.cnTurns !== entry.cnTurns) { existin
 if (entry.roll !== undefined && existing.roll !== entry.roll) { existing.roll = entry.roll; changed = true; }
 if (entry.mod !== undefined && existing.mod !== entry.mod) { existing.mod = entry.mod; changed = true; }
 if (entry.init !== undefined && existing.init !== entry.init) { existing.init = entry.init; changed = true; }
+if (entry.type !== undefined && existing.type !== entry.type) { existing.type = entry.type; changed = true; }
 }
     }
     const manualIds = new Set(manualList.map(e => e.id));
