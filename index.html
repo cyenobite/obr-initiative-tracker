@@ -502,13 +502,13 @@ if (c.tokenId) {
 OBR.scene.items.updateItems([c.tokenId], (items) => {
 for (let item of items) {
 const meta = item.metadata[`${ID}/metadata`];
-if (meta) { meta.cn = c.cn; meta.cnTurns = c.cnTurns; meta.initiative = c.init; meta.roll = c.roll; meta.mod = c.mod; }
+if (meta) { meta.cn = c.cn; meta.cnTurns = c.cnTurns; meta.initiative = c.init; meta.roll = c.roll; meta.mod = c.mod; meta.type = c.type; }
 }
 });
 } else {
 OBR.scene.getMetadata().then((metadata) => {
 const manualList = (metadata[`${ID}/manual`] || []).map(e =>
-e.id === c.id ? { ...e, cn: c.cn, cnTurns: c.cnTurns, init: c.init, roll: c.roll, mod: c.mod } : e
+e.id === c.id ? { ...e, cn: c.cn, cnTurns: c.cnTurns, init: c.init, roll: c.roll, mod: c.mod, type: c.type } : e
 );
 OBR.scene.setMetadata({ [`${ID}/manual`]: manualList });
 });
