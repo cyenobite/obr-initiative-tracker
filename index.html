@@ -326,6 +326,10 @@ if (meta.initiative !== undefined && existing.init !== meta.initiative) {
 existing.init = meta.initiative;
 changed = true;
 }
+if (meta.type && existing.type !== meta.type) {
+existing.type = meta.type;
+changed = true;
+}
 }
     } else {
       const idx = combatants.findIndex(c => c.tokenId === item.id);
