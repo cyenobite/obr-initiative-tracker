@@ -640,14 +640,17 @@ editingModId = null;
 render();
 }
 
-  window.commitTypeEdit = function(id) {
-    const sel = document.getElementById('type-edit-' + id);
-    if (!sel) return;
-    const c = combatants.find(c => c.id === id);
-    if (c) c.type = sel.value;
-    editingTypeId = null;
-    render();
-  }
+window.commitTypeEdit = function(id) {
+const sel = document.getElementById('type-edit-' + id);
+if (!sel) return;
+const c = combatants.find(c => c.id === id);
+if (c) {
+c.type = sel.value;
+pushCombatantState(c);
+}
+editingTypeId = null;
+render();
+}
 
   window.startCombat = function() {
 if (combatants.length === 0) return;
