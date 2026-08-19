@@ -592,6 +592,11 @@ pushCombatantState(c);
     render();
   }
 
+  window.cancelRemove = function() {
+    confirmingId = null;
+    render();
+  }
+
   window.startEditInit = function(id) {
     editingInitId = id; editingTypeId = null; confirmingId = null;
     render();
@@ -864,7 +869,7 @@ ${modCell}
         <div class="confirm-overlay${isConfirming ? ' show' : ''}">
           <span class="confirm-msg">Remove <strong>${c.name}</strong>?</span>
           <button class="btn-confirm-remove" onclick="event.stopPropagation(); window.removeCombatant(${c.id})">Remove</button>
-          <button class="btn-confirm-cancel" onclick="event.stopPropagation(); confirmingId=null; render()">Cancel</button>
+                    <button class="btn-confirm-cancel" onclick="event.stopPropagation(); window.cancelRemove()">Cancel</button>
         </div>
       `;
       list.appendChild(div);
