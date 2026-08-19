@@ -747,12 +747,11 @@ confirmingReset = false;
 render();
 }
 
-  window.selectCombatant = function(idx, id) {
-    if (editingInitId !== null || editingTypeId !== null) return;
-    if (confirmingId !== null) { confirmingId = null; render(); return; }
-    if (state === 'paused') { activeIndex = idx; render(); return; }
-    window.requestRemove(id);
-  }
+window.selectCombatant = function(idx, id) {
+  if (editingInitId !== null || editingTypeId !== null) return;
+  if (confirmingId !== null) { confirmingId = null; render(); return; }
+  if (state === 'paused') { activeIndex = idx; render(); return; }
+}
 
   function renderActionBar() {
 const bar = document.getElementById('action-bar');
