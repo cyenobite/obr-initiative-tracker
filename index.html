@@ -67,8 +67,11 @@ align-items: center;
       border-radius: 8px;
       padding: 10px 14px;
       transition: border-color 0.2s, background 0.2s;
-      cursor: pointer;
+      cursor: default;
       position: relative;
+    }
+    .combatant.paused-click {
+      cursor: pointer;
     }
     .combatant:hover { border-color: var(--border2); background: #2a2320; }
     .combatant.active { background: #2a1f1a; border-color: var(--active-border); border-width: 1px; }
