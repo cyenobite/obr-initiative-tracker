@@ -794,8 +794,7 @@ if (state === 'idle') {
     const list = document.getElementById('combatant-list');
     document.getElementById('pause-hint').style.display = state === 'paused' ? 'block' : 'none';
     if (combatants.length === 0) {
-      list.innerHTML = '<div class="empty-state">No combatants yet — add some below or right-click a token on the map</div>';
-      renderActionBar(); return;
+list.innerHTML = '<div class="empty-state">No combatants yet — add some below or right-click a token on the map<br><br><em>"I burst through the door" — Jikar</em></div>';      renderActionBar(); return;
     }
     list.innerHTML = '';
     const hint = document.createElement('div');
