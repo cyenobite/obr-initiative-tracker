@@ -129,9 +129,9 @@ align-items: center;
     .cn-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cn2); opacity: 0; flex-shrink: 0; transition: opacity 0.15s; }
     .cn-btn.cn-on .cn-dot { opacity: 1; }
     .cn-turns { font-size: 11px; color: var(--cn2); background: #2a1e3a; border: 0.5px solid var(--cn); border-radius: 4px; padding: 2px 6px; min-width: 20px; text-align: center; font-weight: 600; }
-    .turn-dot { width: 8px; height: 8px; background: var(--accent2); border-radius: 50%; opacity: 0; flex-shrink: 0; }
-    .combatant.active .turn-dot { opacity: 1; }
+
     .remove-btn {
+      grid-row: 2; grid-column: 1;
       background: none; border: 0.5px solid transparent; border-radius: 6px;
       width: 28px; height: 28px; cursor: pointer; color: var(--text3);
       font-size: 16px; display: flex; align-items: center; justify-content: center;
@@ -863,7 +863,6 @@ ${modCell}
           <div class="cn-dot"></div>CN
         </button>
         ${c.cn ? `<span class="cn-turns">${c.cnTurns}</span>` : '<span></span>'}
-        <div class="turn-dot"></div>
         <button class="remove-btn" onclick="event.stopPropagation(); window.requestRemove(${c.id})" title="Remove">&#x2715;</button>
         <div class="confirm-overlay${isConfirming ? ' show' : ''}">
           <span class="confirm-msg">Remove <strong>${c.name}</strong>?</span>
