@@ -98,7 +98,8 @@ align-items: center;
     }
     .init-input::-webkit-outer-spin-button,
     .init-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-    .cname { font-size: 15px; font-weight: 500; color: var(--text); }
+        .cname { font-size: 15px; font-weight: 500; color: var(--text); overflow-wrap: break-word; }
+    .name-cell { min-width: 0; }
     .ctype-wrap { display: flex; align-items: center; gap: 4px; margin-top: 2px; flex-wrap: wrap; }
     .ctype-badge {
       font-size: 11px; font-weight: 600; padding: 1px 7px;
@@ -858,7 +859,7 @@ div.innerHTML = `
 <div class="left-dot"></div>
 ${initCell}
 ${modCell}
-<div>
+<div class="name-cell">
 <div class="cname">${c.name}</div>
         </div>
         <div class="row2">
