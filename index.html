@@ -855,15 +855,19 @@ ${initCell}
 ${modCell}
 <div>
 <div class="cname">${c.name}</div>
+        </div>
+        <div class="row2">
+          <button class="remove-btn" onclick="event.stopPropagation(); window.requestRemove(${c.id})" title="Remove">&#x2715;</button>
           <div class="ctype-wrap">
             ${typeCell}${activeLabel}${deckLabel}
           </div>
+          <div class="cn-group">
+            <button class="cn-btn${c.cn ? ' cn-on' : ''}" onclick="event.stopPropagation(); window.toggleCN(${c.id})" title="Toggle Concentration">
+              <div class="cn-dot"></div>CN
+            </button>
+            ${c.cn ? `<span class="cn-turns">${c.cnTurns}</span>` : '<span></span>'}
+          </div>
         </div>
-        <button class="cn-btn${c.cn ? ' cn-on' : ''}" onclick="event.stopPropagation(); window.toggleCN(${c.id})" title="Toggle Concentration">
-          <div class="cn-dot"></div>CN
-        </button>
-        ${c.cn ? `<span class="cn-turns">${c.cnTurns}</span>` : '<span></span>'}
-        <button class="remove-btn" onclick="event.stopPropagation(); window.requestRemove(${c.id})" title="Remove">&#x2715;</button>
         <div class="confirm-overlay${isConfirming ? ' show' : ''}">
           <span class="confirm-msg">Remove <strong>${c.name}</strong>?</span>
           <button class="btn-confirm-remove" onclick="event.stopPropagation(); window.removeCombatant(${c.id})">Remove</button>
