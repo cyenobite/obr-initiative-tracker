@@ -32,6 +32,9 @@ The default initiative tracker in OBR is great! I just wanted to see if I could 
 
    My advice... abbreviate long names as best you can.
 
+   Another note regarding names and this tracker:
+   Combatant names are captured when a token is added to the tracker. If you rename a token after it's already in the tracker, the tracker won't automatically update — remove the combatant, rename the token, then re-add it to see the new name.
+
 8. **Why is there a Pause button?** Pause temporarily halts turn progression without ending combat. While paused, you can click any combatant to set them as the active turn (useful for handling interruptions, reactions, or reordering on the fly) without advancing the round counter. Click **Resume** to continue combat.
 
 **Pro tip:** Like the original OBR tracker, if you get two initiative scores that are equal to one another, you can manually edit the numbers using a decimal point to keep a set order. For example, **19.3 will be before 19.**
