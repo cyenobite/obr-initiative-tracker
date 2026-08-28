@@ -8,7 +8,7 @@ I know AI is a sensitive topic in the RPG community, so if you don't like it, si
 
 Special thanks to the devs of OBR for including an SDK and tutorial for this. I have learned a lot.
 
-Also, special thanks to the helpful extension coders in the Discord server — especially Andrew.
+Also, special thanks to the helpful extension coders in the Discord server — especially Andrew and David.
 
 The default initiative tracker in OBR is great! I just wanted to see if I could add a few more features and controls.
 
