@@ -291,8 +291,10 @@ let changed = false;
 const meta = item.metadata[`${ID}/metadata`];
 if (meta) {
 const exists = combatants.some(c => c.tokenId === item.id);
+let isDuplicate = false;
 if (!exists) {
-const roll = meta.roll !== undefined ? meta.roll : (meta.initiative !== undefined ? meta.initiative : randInit());
+isDuplicate = meta.sourceId !== undefined && meta.sourceId !== item.id;
+const roll = isDuplicate ? randInit() : (meta.roll !== undefined ? meta.roll : (meta.initiative !== undefined ? meta.initiative : randInit()));
 const mod = meta.mod !== undefined ? meta.mod : 0;
 combatants.push({
 name: (item.text?.plainText || item.name || 'Unknown').replace(/\s+Token$/i, ''),
@@ -307,6 +309,20 @@ cn: false,
 cnTurns: 0
 });
 changed = true;
+if (isDuplicate) {
+OBR.scene.items.updateItems([item.id], (items) => {
+for (const it of items) {
+const m = it.metadata[`${ID}/metadata`];
+if (m) {
+m.sourceId = item.id;
+m.roll = roll;
+m.initiative = roll + mod;
+m.cn = false;
+m.cnTurns = 0;
+}
+}
+});
+}
 }
 const existing = combatants.find(c => c.tokenId === item.id);
 if (existing) {
@@ -315,15 +331,15 @@ if (existing.hidden !== nowHidden) {
 existing.hidden = nowHidden;
 changed = true;
 }
-if (meta.cn !== undefined && existing.cn !== meta.cn) {
+if (!isDuplicate && meta.cn !== undefined && existing.cn !== meta.cn) {
 existing.cn = meta.cn;
 changed = true;
 }
-if (meta.cnTurns !== undefined && existing.cnTurns !== meta.cnTurns) {
+if (!isDuplicate && meta.cnTurns !== undefined && existing.cnTurns !== meta.cnTurns) {
 existing.cnTurns = meta.cnTurns;
 changed = true;
 }
-if (meta.roll !== undefined && existing.roll !== meta.roll) {
+if (!isDuplicate && meta.roll !== undefined && existing.roll !== meta.roll) {
 existing.roll = meta.roll;
 changed = true;
 }
@@ -331,7 +347,7 @@ if (meta.mod !== undefined && existing.mod !== meta.mod) {
 existing.mod = meta.mod;
 changed = true;
 }
-if (meta.initiative !== undefined && existing.init !== meta.initiative) {
+if (!isDuplicate && meta.initiative !== undefined && existing.init !== meta.initiative) {
 existing.init = meta.initiative;
 changed = true;
 }
