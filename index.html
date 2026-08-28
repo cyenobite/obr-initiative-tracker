@@ -295,7 +295,7 @@ if (!exists) {
 const roll = meta.roll !== undefined ? meta.roll : (meta.initiative !== undefined ? meta.initiative : randInit());
 const mod = meta.mod !== undefined ? meta.mod : 0;
 combatants.push({
-name: (item.name || 'Unknown').replace(/\s+Token$/i, ''),
+name: (item.text?.plainText || item.name || 'Unknown').replace(/\s+Token$/i, ''),
 init: roll + mod,
 roll: roll,
 mod: mod,
