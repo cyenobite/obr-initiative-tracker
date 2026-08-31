@@ -867,8 +867,8 @@ onblur="window.commitModEdit(${c.id})">`
              style="color:${typeColors[c.type]||'#a89890'}; background:${typeBg[c.type]||'#2a2a2a'};"
              onclick="event.stopPropagation(); window.startEditType(${c.id})"
              title="Click to change type">${c.type}${isHidden ? ' 👁️' : ''}</span>`;
-      const activeLabel = isActive && state === 'active'
-        <span class="active-label" style="color:#e74c3c">&nbsp;&middot;&nbsp; Active</span>
+            const activeLabel = isActive && state === 'active'
+        ? `<span class="active-label" style="color:#e74c3c">&nbsp;&middot;&nbsp; Active</span>` : '';
       const deckLabel = isActive && state === 'paused'
         ? `<span class="active-label" style="color:var(--pause2)">&nbsp;&middot;&nbsp; On deck</span>` : '';
 div.innerHTML = `
