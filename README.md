@@ -37,6 +37,8 @@ The default initiative tracker in OBR is great! I just wanted to see if I could 
 
 8. **Why is there a Pause button?** Pause temporarily halts turn progression without ending combat. While paused, you can click any combatant to set them as the active turn (useful for handling interruptions, reactions, or reordering on the fly) without advancing the round counter. Click **Resume** to continue combat.
 
+9. **OBR has a nice built in feature when selecting a token and holding the Option/Alt button down,** it will create a duplicate token, and if the token has a number or letter at the end OBR will update the name with a new number/letter. Example, Goblin 1, will create a new token Goblin 2. This tracker sees that, and will automatically add the new token to the tracker along with it's own new initiative number. I know some games (or GMs) prefer to run all like monsters with the same initiative number, but in the games I've played we don't do that. So I kept the individual initiative numbers. Remember you can always go back and manually edit those numbers if you want them all to match.  
+
 **Pro tip:** Like the original OBR tracker, if you get two initiative scores that are equal to one another, you can manually edit the numbers using a decimal point to keep a set order. For example, **19.3 will be before 19.**
 
-This is a work in progress as of 08-27-26.
+This is a work in progress as of 08-31-26.
