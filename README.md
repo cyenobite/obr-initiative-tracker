@@ -41,4 +41,6 @@ The default initiative tracker in OBR is great! I just wanted to see if I could 
 
 **Pro tip:** Like the original OBR tracker, if you get two initiative scores that are equal to one another, you can manually edit the numbers using a decimal point to keep a set order. For example, **19.3 will be before 19.**
 
+Lastly: Another special thanks to my alpha/beta testers: Ken T - Top Haggis advisor and Dave M - Maple Syrup advisor. 
+
 This is a work in progress as of 08-31-26.
