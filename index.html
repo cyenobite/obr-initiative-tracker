@@ -432,15 +432,9 @@ if (entry.type !== undefined && existing.type !== entry.type) { existing.type = 
   }
 
   if (OBR) {
-    OBR.onReady(async () => {
-      const ready = await OBR.scene.isReady();
-      if (ready) await loadInitialState();
-
-      OBR.scene.onReadyChange(async (isReady) => {
-        if (isReady) await loadInitialState();
-      });
-
-      // Watch for token add/remove changes
+        OBR.onReady(async () => {
+      // Watch for token add/remove changes — registered first so no live
+      // update can be missed while the initial state is still loading.
       OBR.scene.items.onChange(async (items) => {
         let changed = false;
         for (const item of items) {
@@ -455,6 +449,13 @@ if (entry.type !== undefined && existing.type !== entry.type) { existing.type = 
             if (area) area.scrollTop = area.scrollHeight;
           }, 30);
         }
+            });
+
+      const ready = await OBR.scene.isReady();
+      if (ready) await loadInitialState();
+
+      OBR.scene.onReadyChange(async (isReady) => {
+        if (isReady) await loadInitialState();
       });
 
       // Watch for manually-added combatants AND combat-state changes shared by other players
