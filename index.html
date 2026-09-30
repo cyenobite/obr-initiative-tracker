@@ -435,7 +435,7 @@ if (entry.type !== undefined && existing.type !== entry.type) { existing.type = 
         OBR.onReady(async () => {
       // Watch for token add/remove changes — registered first so no live
       // update can be missed while the initial state is still loading.
-      OBR.scene.items.onChange(async (items) => {
+            OBR.scene.items.onChange(async (items) => {
         let changed = false;
         for (const item of items) {
           const didChange = await syncItemToCombatants(item);
@@ -444,6 +444,7 @@ if (entry.type !== undefined && existing.type !== entry.type) { existing.type = 
         if (changed) {
           sortCombatants();
           render();
+          pushCombatState();
           setTimeout(() => {
             const area = document.querySelector('.scroll-area');
             if (area) area.scrollTop = area.scrollHeight;
