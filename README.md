@@ -1,4 +1,4 @@
-# obr-initiative-tracker
+# Jikar's-initiative-tracker
 
 An attempt to create a simple D&D Initiative Tracker for use in Owlbear Rodeo VTT.
 
@@ -39,8 +39,10 @@ The default initiative tracker in OBR is great! I just wanted to see if I could 
 
 9. **OBR has a nice built in feature when selecting a token and holding the Option/Alt button down,** it will create a duplicate token, and if the token has a number or letter at the end OBR will update the name with a new number/letter. Example, Goblin 1, will create a new token Goblin 2. This tracker sees that, and will automatically add the new token to the tracker along with it's own new initiative number. I know some games (or GMs) prefer to run all like monsters with the same initiative number, there is a way to do this too! Before adding any group of monsters to the initiative tracker, create however many tokens you want (example; Golbin1, Goblin2, Goblin3). Next select the first token (Goblin1), then hold "shift" button down to select the other tokens (Goblin2 and 3). With all the monsters selected now, then either 'right-click' or select the "add to initiative tracker" from the token menu, and ALL selected tokens will be added with the exact same initiative result. 
 
+10. I've just learned that Barbarians in DnD have an option where they can roll initiative with advantage which I did not account for with this. My advice, let the tracker work as intended with the default roll, then you can simply roll another d20 in your preferred dice app (or physical die), and if it's higher than the randomly generated one of the tracker, then just click on the initiative and edit it to the higher number.
+
 **Pro tip:** Like the original OBR tracker, if you get two initiative scores that are equal to one another, you can manually edit the numbers using a decimal point to keep a set order. For example, **19.3 will be before 19.**
 
-Lastly: Another special thanks to my alpha/beta testers: Ken T - Top Haggis advisor and Dave M - Maple Syrup advisor. 
+Lastly: Another special thanks to my alpha/beta testers: Ken T - Top Haggis advisor and Dave M - Maple Syrup advisor also Jikar and those other guys (Dave S, David B and Sean B).
 
 This is a work in progress as of 08-31-26.
