@@ -1,5 +1,5 @@
 {
-  "name": "Initiative Tracker",
+  "name": "Combat Initiative",
   "version": "1.1.0",
   "manifest_version": 1,
   "description": "A custom D&D initiative tracker with concentration tracking, pause/resume, and sound alerts.",
@@ -7,7 +7,7 @@
   "icon": "/obr-initiative-tracker/icon.svg",
   "background_url": "/obr-initiative-tracker/background.html",
   "action": {
-    "title": "Initiative Tracker",
+    "title": "Combat Initiative",
     "icon": "/obr-initiative-tracker/icon.svg",
     "popover": "/obr-initiative-tracker/index.html",
     "width": 400,
