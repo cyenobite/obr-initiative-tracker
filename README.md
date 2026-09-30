@@ -1,4 +1,4 @@
-# Jikar's-initiative-tracker
+# Combat Initiative Tracker
 
 An attempt to create a simple D&D Initiative Tracker for use in Owlbear Rodeo VTT.
 
@@ -45,4 +45,4 @@ The default initiative tracker in OBR is great! I just wanted to see if I could 
 
 Lastly: Another special thanks to my alpha/beta testers: Ken T - Top Haggis advisor and Dave M - Maple Syrup advisor also Jikar and those other guys (Dave S, David B and Sean B).
 
-This is a work in progress as of 08-31-26.
+This is a work in progress as of 09-30-26.
