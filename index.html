@@ -588,7 +588,7 @@ if (target && target.tokenId && OBR) {
         OBR.scene.setMetadata({ [`${ID}/manual`]: manualList });
       });
     }
-    combatants = combatants.filter(c => c.id !== id);
+        combatants = combatants.filter(c => c.id !== id);
     confirmingId = null; editingInitId = null; editingTypeId = null;
     if (combatants.length === 0) { activeIndex = 0; state = 'idle'; }
     else {
@@ -597,6 +597,7 @@ if (target && target.tokenId && OBR) {
       if (activeIndex >= combatants.length) activeIndex = 0;
     }
     render();
+    pushCombatState();
   }
   window.removeCombatant = removeCombatant;
 
