@@ -45,4 +45,7 @@ The default initiative tracker in OBR is great! I just wanted to see if I could 
 
 Lastly: Another special thanks to my alpha/beta testers: Ken T - Top Haggis advisor and Dave M - Maple Syrup advisor also Jikar and those other guys (Dave S, David B and Sean B).
 
-This is a work in progress as of 09-30-26.
+# Potential Bug Warning
+This extension is still undergoing testing. There has been one annoying bug that appears when a new player joins an owlbear room/scene, they do not see any combatants in the tracker. The GM usually can see the combatants though. The fix is simple, the user must do a "hard refresh" which is different than just hitting the refresh button in your browser. It's a keyboard command. On the MAC it's "Command+Shift+R" and on the PC it's "Control+Shift+R". This so far has always fixed this issue. BUT... as I type this, I just finished updating the code and initial testing suggests this bug is now fixed, but I need to do more testing on other machines with other people. If it's all working fine, I'll delete this comment in the future. 
+
+This is a work in progress as of 10-01-26.
