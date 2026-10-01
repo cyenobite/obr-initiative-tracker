@@ -48,4 +48,7 @@ Lastly: Another special thanks to my alpha/beta testers: Ken T - Top Haggis advi
 # Potential Bug Warning
 This extension is still undergoing testing. There has been one annoying bug that appears when a new player joins an owlbear room/scene, they do not see any combatants in the tracker. The GM usually can see the combatants though. The fix is simple, the user must do a "hard refresh" which is different than just hitting the refresh button in your browser. It's a keyboard command. On the MAC it's "Command+Shift+R" and on the PC it's "Control+Shift+R". This so far has always fixed this issue. BUT... as I type this, I just finished updating the code and initial testing suggests this bug is now fixed, but I need to do more testing on other machines with other people. If it's all working fine, I'll delete this comment in the future. 
 
+# Advice
+This extension runs independently and won't conflict with Owlbear's default initiative tracker, but you may want to disable one of them to avoid duplicate menu items and icon clutter.
+
 This is a work in progress as of 10-01-26.
