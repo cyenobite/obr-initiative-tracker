@@ -447,7 +447,6 @@ if (entry.type !== undefined && existing.type !== entry.type) { existing.type = 
           changed = changed || didChange;
         }
         if (changed) {
-          console.log('[CombatInit] items.onChange pushing state:', state, 'round', round, 'activeIndex', activeIndex);
           sortCombatants();
           render();
                     if (combatLoaded) pushCombatState();
