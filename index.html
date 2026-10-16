@@ -517,6 +517,7 @@ if (activeIndex < 0) activeIndex = 0;
 }
 
 function pushCombatState() {
+console.log('[CombatInit] PUSH:', state, 'round', round);
 if (!OBR) return Promise.resolve();
 const active = combatants[activeIndex];
 const activeId = active ? (active.tokenId || active.id) : null;
