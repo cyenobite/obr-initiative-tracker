@@ -264,6 +264,7 @@ align-items: center;
 let editingModId = null;
 let soundOn = true;
 let suppressSync = false;
+let combatLoaded = false;
 let confirmingReset = false;
 const REQUIRE_RESET_CONFIRM = true;
 
@@ -425,10 +426,11 @@ if (entry.type !== undefined && existing.type !== entry.type) { existing.type = 
     try {
       const metadata = await OBR.scene.getMetadata();
       const combat = metadata[`${ID}/combat`];
-      if (combat) {
+            if (combat) {
         applyCombatMetadata(combat);
         render();
       }
+      combatLoaded = true;
     } catch (err) {
       // Scene wasn't ready yet; onReadyChange will retry.
     }
@@ -448,7 +450,7 @@ if (entry.type !== undefined && existing.type !== entry.type) { existing.type = 
           console.log('[CombatInit] items.onChange pushing state:', state, 'round', round, 'activeIndex', activeIndex);
           sortCombatants();
           render();
-          pushCombatState();
+                    if (combatLoaded) pushCombatState();
           setTimeout(() => {
             const area = document.querySelector('.scroll-area');
             if (area) area.scrollTop = area.scrollHeight;
