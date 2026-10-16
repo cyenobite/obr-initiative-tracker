@@ -449,7 +449,7 @@ if (entry.type !== undefined && existing.type !== entry.type) { existing.type = 
         if (changed) {
           sortCombatants();
           render();
-                    if (combatLoaded) pushCombatState();
+                    if (combatLoaded) pushActiveIfChanged();
           setTimeout(() => {
             const area = document.querySelector('.scroll-area');
             if (area) area.scrollTop = area.scrollHeight;
@@ -522,6 +522,19 @@ if (!OBR) return Promise.resolve();
 const active = combatants[activeIndex];
 const activeId = active ? (active.tokenId || active.id) : null;
 return OBR.scene.setMetadata({ [`${ID}/combat`]: { state, activeId, round } });
+}
+
+async function pushActiveIfChanged() {
+  if (!OBR) return;
+  try {
+    const metadata = await OBR.scene.getMetadata();
+    const saved = metadata[`${ID}/combat`];
+    if (!saved) return;
+    const active = combatants[activeIndex];
+    const activeId = active ? (active.tokenId || active.id) : null;
+    if (saved.activeId === activeId) return;
+    await OBR.scene.setMetadata({ [`${ID}/combat`]: { ...saved, activeId } });
+  } catch (err) {}
 }
 
 function applyCombatMetadata(combat) {
