@@ -421,7 +421,17 @@ if (entry.type !== undefined && existing.type !== entry.type) { existing.type = 
     } catch (err) {
       // Scene wasn't ready yet; onReadyChange below will retry.
     }
-    if (changed) { sortCombatants(); render(); }
+        if (changed) { sortCombatants(); render(); }
+    try {
+      const metadata = await OBR.scene.getMetadata();
+      const combat = metadata[`${ID}/combat`];
+      if (combat) {
+        applyCombatMetadata(combat);
+        render();
+      }
+    } catch (err) {
+      // Scene wasn't ready yet; onReadyChange will retry.
+    }
   }
 
   if (OBR) {
