@@ -438,6 +438,10 @@ if (entry.type !== undefined && existing.type !== entry.type) { existing.type = 
 
   if (OBR) {
         OBR.onReady(async () => {
+      try {
+        isGM = (await OBR.player.getRole()) === 'GM';
+        render();
+      } catch (err) {}
       // Watch for token add/remove changes — registered first so no live
       // update can be missed while the initial state is still loading.
             OBR.scene.items.onChange(async (items) => {
