@@ -441,7 +441,6 @@ if (entry.type !== undefined && existing.type !== entry.type) { existing.type = 
         OBR.onReady(async () => {
       try {
         const role = await OBR.player.getRole();
-        console.log('[CombatInit] role:', role);
         isGM = role === 'GM';
         render();
       } catch (err) {}
@@ -861,7 +860,6 @@ list.innerHTML = '<div class="empty-state">No combatants yet — add some below 
       const isEditingInit = editingInitId === c.id;
       const isEditingType = editingTypeId === c.id;
       const isHidden = c.hidden === true;
-      console.log('[CombatInit] card:', c.name, 'hidden:', c.hidden, 'isGM:', isGM);
       if (isHidden && !isGM) return;
       const div = document.createElement('div');
       let cls = 'combatant';
