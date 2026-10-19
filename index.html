@@ -717,7 +717,8 @@ render();
 
   window.startCombat = function() {
 if (combatants.length === 0) return;
-state = 'active'; activeIndex = 0; round = 1;
+if (combatants.every(c => c.hidden === true)) return;
+state = 'active'; activeIndex = combatants.findIndex(c => c.hidden !== true); round = 1;
 document.getElementById('round-num').textContent = '1';
 confirmingId = null; editingInitId = null; editingTypeId = null;
 render(); scrollToActive();
