@@ -439,7 +439,9 @@ if (entry.type !== undefined && existing.type !== entry.type) { existing.type = 
   if (OBR) {
         OBR.onReady(async () => {
       try {
-        isGM = (await OBR.player.getRole()) === 'GM';
+        const role = await OBR.player.getRole();
+        console.log('[CombatInit] role:', role);
+        isGM = role === 'GM';
         render();
       } catch (err) {}
       // Watch for token add/remove changes — registered first so no live
