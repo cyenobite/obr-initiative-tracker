@@ -447,6 +447,7 @@ if (entry.type !== undefined && existing.type !== entry.type) { existing.type = 
       // Watch for token add/remove changes — registered first so no live
       // update can be missed while the initial state is still loading.
             OBR.scene.items.onChange(async (items) => {
+        console.log('[CombatInit] items received:', items.length);
         let changed = false;
         for (const item of items) {
           const didChange = await syncItemToCombatants(item);
