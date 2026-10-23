@@ -100,6 +100,11 @@
   }
 
   OBR.onReady(() => {
+    // Keep the red ring on the active token (only the GM's window draws it)
+    OBR.scene.onReadyChange((ready) => { if (ready) updateMarker(); });
+    OBR.scene.onMetadataChange(() => updateMarker());
+    OBR.scene.items.onChange(() => updateMarker());
+    updateMarker();
     OBR.contextMenu.create({
       id: `${ID}/context-menu`,
       icons: [
