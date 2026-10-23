@@ -6,9 +6,98 @@
 </head>
 <body>
 <script type="module">
-  import OBR from "https://cdn.jsdelivr.net/npm/@owlbear-rodeo/sdk@3.1.0/+esm";
+  import OBR, { buildShape } from "https://cdn.jsdelivr.net/npm/@owlbear-rodeo/sdk@3.1.0/+esm";
 
   const ID = "io.github.cyenobite.obr-initiative-tracker";
+
+  // ---- Active-token marker (red ring) ----
+  // Technique based on Game Master's Grimoire (MIT license):
+  // github.com/kamejosh/owlbear-hp-tracker, src/helper/currentHelper.ts
+  const MARKER_NAME = "Combat Initiative - Active Marker";
+  const MARKER_SCALE = 1.2; // ring size compared to the token
+
+  // Draws, moves, or removes the ring. Only the GM's window does this.
+  async function drawMarker() {
+    if (!(await OBR.scene.isReady())) return;
+    if ((await OBR.player.getRole()) !== "GM") return;
+
+    const metadata = await OBR.scene.getMetadata();
+    const combat = metadata[`${ID}/combat`];
+    const shouldShow = combat && (combat.state === "active" || combat.state === "paused");
+    const markers = await OBR.scene.items.getItems((item) => item.name === MARKER_NAME);
+
+    let token = null;
+    if (shouldShow && typeof combat.activeId === "string") {
+      const found = await OBR.scene.items.getItems([combat.activeId]);
+      token = found[0] || null;
+    }
+
+    // No valid active token: remove any ring and stop.
+    if (!token) {
+      if (markers.length > 0) await OBR.scene.items.deleteItems(markers.map((m) => m.id));
+      return;
+    }
+
+    const bounds = await OBR.scene.items.getItemBounds([token.id]);
+    const size = Math.max(bounds.width, bounds.height) * MARKER_SCALE;
+    const center = bounds.center;
+
+    if (markers.length === 0) {
+      const marker = buildShape()
+        .width(size)
+        .height(size)
+        .position(center)
+        .shapeType("CIRCLE")
+        .fillColor("white")
+        .fillOpacity(0.5)
+        .strokeColor("red")
+        .strokeOpacity(0.7)
+        .layer("MOUNT")
+        .visible(token.visible)
+        .locked(true)
+        .disableHit(true)
+        .attachedTo(token.id)
+        .name(MARKER_NAME)
+        .build();
+      await OBR.scene.items.addItems([marker]);
+      return;
+    }
+
+    // A ring already exists: keep one, delete any extras, and fix it if needed.
+    const keep = markers[0];
+    if (markers.length > 1) {
+      await OBR.scene.items.deleteItems(markers.slice(1).map((m) => m.id));
+    }
+    const alreadyCorrect =
+      keep.attachedTo === token.id &&
+      keep.visible === token.visible &&
+      Math.abs(keep.width - size) < 0.5 &&
+      Math.abs(keep.height - size) < 0.5 &&
+      Math.abs(keep.position.x - center.x) < 0.5 &&
+      Math.abs(keep.position.y - center.y) < 0.5;
+    if (alreadyCorrect) return; // writing again would trigger endless updates
+    await OBR.scene.items.updateItems([keep.id], (items) => {
+      for (const m of items) {
+        m.attachedTo = token.id;
+        m.width = size;
+        m.height = size;
+        m.position = center;
+        m.scale = { x: 1, y: 1 };
+        m.visible = token.visible;
+      }
+    });
+  }
+
+  // Wrapper: runs one update at a time so quick changes can't create two rings.
+  let markerBusy = false;
+  let markerQueued = false;
+  async function updateMarker() {
+    if (markerBusy) { markerQueued = true; return; }
+    markerBusy = true;
+    try { await drawMarker(); } catch (err) {}
+    markerBusy = false;
+    if (markerQueued) { markerQueued = false; updateMarker(); }
+  }
 
   OBR.onReady(() => {
     OBR.contextMenu.create({
