@@ -832,7 +832,7 @@ render();
 window.selectCombatant = function(idx, id) {
   if (editingInitId !== null || editingTypeId !== null) return;
   if (confirmingId !== null) { confirmingId = null; render(); return; }
-  if (state === 'paused') { activeIndex = idx; render(); return; }
+  if (state === 'paused') { activeIndex = idx; render(); pushCombatState(); return; }
 }
 
   function renderActionBar() {
