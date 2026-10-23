@@ -74,9 +74,7 @@
       keep.attachedTo === token.id &&
       keep.visible === token.visible &&
       Math.abs(keep.width - size) < 0.5 &&
-      Math.abs(keep.height - size) < 0.5 &&
-      Math.abs(keep.position.x - center.x) < 0.5 &&
-      Math.abs(keep.position.y - center.y) < 0.5;
+            Math.abs(keep.height - size) < 0.5;
     if (alreadyCorrect) return; // writing again would trigger endless updates
     await OBR.scene.items.updateItems([keep.id], (items) => {
       for (const m of items) {
