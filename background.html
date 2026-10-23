@@ -78,10 +78,10 @@
     if (alreadyCorrect) return; // writing again would trigger endless updates
     await OBR.scene.items.updateItems([keep.id], (items) => {
       for (const m of items) {
+                if (m.attachedTo !== token.id) m.position = center;
         m.attachedTo = token.id;
         m.width = size;
         m.height = size;
-        m.position = center;
         m.scale = { x: 1, y: 1 };
         m.visible = token.visible;
       }
