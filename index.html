@@ -447,7 +447,27 @@ if (entry.type !== undefined && existing.type !== entry.type) { existing.type = 
       // Watch for token add/remove changes — registered first so no live
       // update can be missed while the initial state is still loading.
             OBR.scene.items.onChange(async (items) => {
-        console.log('[CombatInit] items received:', items.length);
+        if (combatLoaded && items.length > 0) {
+          const present = new Set(items.map(i => i.id));
+          const ghosts = combatants.filter(c => c.tokenId && !present.has(c.tokenId));
+          if (ghosts.length > 0) {
+            for (const g of ghosts) {
+              const idx = combatants.findIndex(x => x.id === g.id);
+              if (idx === -1) continue;
+              const wasActive = idx === activeIndex;
+              combatants.splice(idx, 1);
+              if (combatants.length === 0) { activeIndex = 0; state = 'idle'; }
+              else {
+                if (idx < activeIndex) activeIndex = Math.max(0, activeIndex - 1);
+                else if (wasActive) activeIndex = activeIndex % combatants.length;
+                if (activeIndex >= combatants.length) activeIndex = 0;
+              }
+            }
+            confirmingId = null; editingInitId = null; editingTypeId = null;
+            render();
+            pushActiveIfChanged();
+          }
+        }
         let changed = false;
         for (const item of items) {
           const didChange = await syncItemToCombatants(item);
