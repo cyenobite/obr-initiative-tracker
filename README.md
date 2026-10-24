@@ -8,7 +8,7 @@ I know AI is a sensitive topic in the RPG community, so if you don't like it, si
 
 Special thanks to the devs of OBR for including an SDK and tutorial for this. I have learned a lot.
 
-Also, special thanks to the helpful extension coders in the Discord server — especially Andrew and David and Uhlig.
+Also, special thanks to the helpful extension coders in the Discord server — especially Andrew and David and Uhlig. Special thanks to Josh (creator of Game Master's Grimoire) for making his source code available under the MIT License, which helped inspire the active-token marker in Combat Initiative. 
 
 The default initiative tracker in OBR is great! I just wanted to see if I could add a few more features and controls.
 
@@ -24,9 +24,10 @@ The default initiative tracker in OBR is great! I just wanted to see if I could 
 
 5. **When you reset the tracker for a new round of combat, it will keep all the Players and NPCs, so you won't need to re-add them each time, but it will delete the Monsters.**
 
-   Players, Monsters, and NPCs can of course be removed manually — even during combat — by clicking on the "X" button.
+   Players, Monsters, and NPCs can of course be removed manually — even during combat — by clicking on the "X" button, also deleting the token will also remove it from the tracker. (note, if the token is deleted by accident an "undo" key command (Command/Control + z) will bring the token back and will bring back the name in the tracker. This can only be done right after the token is deleted. 
 
-6. **I have added an audible "ding" (with a mute button to turn it off),** but because of a limitation to how OBR handles sound in browser windows, you will only hear the "ding" if you are the one who presses the "Next Turn" button.
+6. **I have added an audible "ding"** 
+**Sound**: Click the 🔔 in the tracker to hear a ding on every turn change. Sound is off by default and is set per person, so each player chooses for themselves. Click the bell once each session (your browser needs a click before it will play sound). Headphones are recommended. If you play over Zoom with speakers and unfiltered ("original") audio, the ding can echo, so leave the bell off in that case. The tracker panel must be open for the ding to play, and an iPhone's silent switch will mute it.
 
 7. **The tracker has a limit of 29 characters for each combatant name (including spaces).** Names will break into multiple lines based on spaces. If there is a crazy-long name with no spaces, it will also break across multiple lines.
 
@@ -46,9 +47,10 @@ The default initiative tracker in OBR is great! I just wanted to see if I could 
 Lastly: Another special thanks to my alpha/beta testers: Ken T - Top Haggis advisor and Dave M - Maple Syrup advisor also Jikar and those other guys (Dave S, David B and Sean B).
 
 # Potential Bug Warning
-This extension is still undergoing testing. There has been one annoying bug that appears when a new player joins an owlbear room/scene, they do not see any combatants in the tracker. The GM usually can see the combatants though. The fix is simple, the user must do a "hard refresh" which is different than just hitting the refresh button in your browser. It's a keyboard command. On the MAC it's "Command+Shift+R" and on the PC it's "Control+Shift+R". This so far has always fixed this issue. BUT... as I type this, I just finished updating the code and initial testing suggests this bug is now fixed, but I need to do more testing on other machines with other people. If it's all working fine, I'll delete this comment in the future. 
+This extension is still undergoing testing. 
+IF you encounter a bug or glitch, often times a simple web browser refresh will work. Occasionally a "hard refresh" is needed, and will update any sort of code changes that were implemented since the last time you ran the extension in owlbear. A hard refresh is a keyboard command. On the MAC it's "Command+Shift+R" and on the PC it's "Control+Shift+R". This so far has always fixed this issue. 
 
 # Advice
-This extension runs independently and won't conflict with Owlbear's default initiative tracker, but you may want to disable one of them to avoid duplicate menu items and icon clutter.
+This extension runs independently and won't conflict with Owlbear's default initiative tracker, but you may want to disable one of them to avoid duplicate initiative trackers in the menu items and icon clutter.
 
-This is a work in progress as of 10-01-26.
+This is a work in progress as of 10-24-26.
