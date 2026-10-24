@@ -515,15 +515,41 @@ scrollToActive();
 
   window.toggleSound = function() {
     soundOn = !soundOn;
+    if (soundOn) { unlockAudio(); confirmDing(); }
     const btn = document.getElementById('sound-toggle');
     btn.textContent = soundOn ? '🔔' : '🔕';
     btn.classList.toggle('muted', !soundOn);
   }
 
+  let audioCtx = null;
+  function getAudioCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+  // Called from the bell click (a real user gesture) to wake up audio
+  function unlockAudio() {
+    try {
+      const ctx = getAudioCtx();
+      const src = ctx.createBufferSource();
+      src.buffer = ctx.createBuffer(1, 1, 22050);
+      src.connect(ctx.destination);
+      src.start(0);
+    } catch (e) {}
+  }
+  // Confirmation ding when the bell is turned on (3-second cooldown)
+  let lastConfirmDing = 0;
+  function confirmDing() {
+    const now = Date.now();
+    if (now - lastConfirmDing < 3000) return;
+    lastConfirmDing = now;
+    playDing();
+  }
+
   function playDing() {
     if (!soundOn) return;
     try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const ctx = getAudioCtx();
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain); gain.connect(ctx.destination);
