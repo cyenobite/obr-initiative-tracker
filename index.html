@@ -265,6 +265,7 @@ let editingModId = null;
 let soundOn = false;
 let suppressSync = false;
 let combatLoaded = false;
+let turnSeq = 0;
 let isGM = false;
 let confirmingReset = false;
 const REQUIRE_RESET_CONFIRM = true;
@@ -573,7 +574,7 @@ function pushCombatState() {
 if (!OBR) return Promise.resolve();
 const active = combatants[activeIndex];
 const activeId = active ? (active.tokenId || active.id) : null;
-return OBR.scene.setMetadata({ [`${ID}/combat`]: { state, activeId, round } });
+return OBR.scene.setMetadata({ [`${ID}/combat`]: { state, activeId, round, turnSeq } });
 }
 
 async function pushActiveIfChanged() {
@@ -591,6 +592,11 @@ async function pushActiveIfChanged() {
 
 function applyCombatMetadata(combat) {
 if (!combat) return;
+const incoming = combat.turnSeq || 0;
+if (incoming > turnSeq) {
+  if (combatLoaded && combat.state === 'active') playDing();
+  turnSeq = incoming;
+}
 state = combat.state;
 round = combat.round;
 const roundEl = document.getElementById('round-num');
@@ -780,6 +786,7 @@ do {
   activeIndex = (activeIndex + 1) % combatants.length;
   if (activeIndex === 0) { round++; document.getElementById('round-num').textContent = round; }
 } while (combatants[activeIndex].hidden === true);
+turnSeq++;
 playDing();
 render(); scrollToActive();
 pushCombatState();
