@@ -8,7 +8,7 @@ I know AI is a sensitive topic in the RPG community, so if you don't like it, si
 
 Special thanks to the devs of OBR for including an SDK and tutorial for this. I have learned a lot.
 
-Also, special thanks to the helpful extension coders in the Discord server — especially Andrew and David and Uhlig. Special thanks to Josh (creator of Game Master's Grimoire) for making his source code available under the MIT License, which helped inspire the active-token marker in Combat Initiative. 
+Also, special thanks to the helpful extension coders in the Discord server — especially Andrew and David and Uhlig. Special thanks to Josh - The active-token ring is adapted from Game Master's Grimoire by Joshua Hercher (MIT).
 
 The default initiative tracker in OBR is great! I just wanted to see if I could add a few more features and controls.
 
