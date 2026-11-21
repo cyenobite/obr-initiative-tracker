@@ -951,7 +951,7 @@ onblur="window.commitModEdit(${c.id})">`
              <option value="NPC" ${c.type==='NPC'?'selected':''}>NPC</option>
            </select>`
         : `<span class="ctype-badge"
-             style="color:${typeColors[c.type]||'#a89890'}; background:${typeBg[c.type]||'#2a2a2a'};"
+             style="color:${typeColors[c.type]||'#a89890'}; background:${typeBg[c.type]||'#1c2123'};"
              onclick="event.stopPropagation(); window.startEditType(${c.id})"
              title="Click to change type">${c.type}${isHidden ? ' 👁️' : ''}</span>`;
             const activeLabel = isActive && state === 'active'
