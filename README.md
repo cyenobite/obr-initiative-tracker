@@ -53,6 +53,8 @@ IF you encounter a bug or glitch, often times a simple web browser refresh will 
 # Advice
 This extension runs independently and won't conflict with Owlbear's default initiative tracker, but you may want to disable one of them to avoid duplicate initiative trackers in the menu items and icon clutter.
 
+I've had several people ask me if this can track hit points and/or conditions. I purposefully did not add those features to this as I wanted to keep it a "simple tracker of initiative". Our game group uses the excellent extension called "Owl Trackers" to track hit points and AC - I highly recommend this extension. 
+
 # Feedback
 This is my first attempt to vibe code something, but I've put a lot of time and effort into this, so please be kind. 
 I can be reached on the OBR discord via user name "Jefw".
