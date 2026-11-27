@@ -53,4 +53,8 @@ IF you encounter a bug or glitch, often times a simple web browser refresh will 
 # Advice
 This extension runs independently and won't conflict with Owlbear's default initiative tracker, but you may want to disable one of them to avoid duplicate initiative trackers in the menu items and icon clutter.
 
-This is a work in progress as of 10-24-26.
+# Feedback
+This is my first attempt to vibe code something, but I've put a lot of time and effort into this, so please be kind. 
+I can be reached on the OBR discord via user name "Jefw".
+
+This is a work in progress but I think I'm 99% done at this stage. I am tweaking the colors though as I post this as of 11-27-26.
